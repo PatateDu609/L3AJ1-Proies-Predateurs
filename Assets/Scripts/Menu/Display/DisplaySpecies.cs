@@ -10,7 +10,9 @@ namespace Menu
     {
         public enum SpeciesType { Prey, Predator }
 
+        [HideInInspector]
         public SpeciesType speciesType = SpeciesType.Prey;
+        [HideInInspector]
         public bool redraw = true;
 
         private void Start()

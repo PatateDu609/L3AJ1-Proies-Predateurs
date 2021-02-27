@@ -5,14 +5,10 @@ namespace Menu
 {
     class EditAction : MonoBehaviour, ButtonAction
     {
-
         public WorldAction.WorldOptions worldPreset;
-        static WorldAction.WorldOptions preset;
 
         public void Action()
         {
-            preset = worldPreset;
-
             switch (worldPreset)
             {
                 case WorldAction.WorldOptions.WorldPreset1:
