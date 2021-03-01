@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EnvironmentalParametersMenu.unity
     guid: 729285d81a530d146a283beeb9ae89aa
+  - enabled: 1
+    path: Assets/Scenes/AgentParametersMenu.unity
+    guid: d50b85cb961daed469417a5fe504d48f
   m_configObjects: {}

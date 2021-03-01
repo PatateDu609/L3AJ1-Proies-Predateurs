@@ -6,18 +6,19 @@ using UnityEngine.UI;
 
 namespace Menu
 {
+    /// <summary>
+    /// Permet d'afficher les boutons des relatifs à chaque type d'espèce (proies ou prédateurs)
+    /// </summary>
     public class DisplaySpecies : MonoBehaviour
     {
         public enum SpeciesType { Prey, Predator }
-
+        
+        // Définit quel onglet est sélectionné.
         [HideInInspector]
         public SpeciesType speciesType = SpeciesType.Prey;
+        // Indique qu'il faut redessiner le contenu du Viewport
         [HideInInspector]
         public bool redraw = true;
-
-        private void Start()
-        {
-        }
 
         private void Update()
         {

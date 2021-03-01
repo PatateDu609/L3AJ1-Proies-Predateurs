@@ -5,6 +5,7 @@ namespace Menu
 {
     class EditAction : MonoBehaviour, ButtonAction
     {
+        // Monde à éditer.
         public WorldAction.WorldOptions worldPreset;
 
         public void Action()
@@ -14,7 +15,6 @@ namespace Menu
                 case WorldAction.WorldOptions.WorldPreset1:
                 case WorldAction.WorldOptions.WorldPreset2:
                 case WorldAction.WorldOptions.WorldPreset3:
-                case WorldAction.WorldOptions.NewWorld:
                     LoadScene.Load("ParameterMenu");
                     break;
                 default:

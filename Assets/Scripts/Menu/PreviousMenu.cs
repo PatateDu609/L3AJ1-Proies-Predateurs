@@ -9,7 +9,7 @@ namespace Menu
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetButtonDown("Back"))
                 LoadScene.Load(sceneStack.Pop(), true);
         }
     }

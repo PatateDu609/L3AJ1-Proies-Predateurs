@@ -17,8 +17,10 @@ namespace Menu
                 case WorldOptions.WorldPreset1:
                 case WorldOptions.WorldPreset2:
                 case WorldOptions.WorldPreset3:
-                case WorldOptions.NewWorld:
                     LoadScene.Load("World");
+                    break;
+                case WorldOptions.NewWorld:
+                    LoadScene.Load("ParameterMenu");
                     break;
                 default:
                     Debug.LogError("This option is not supported.");

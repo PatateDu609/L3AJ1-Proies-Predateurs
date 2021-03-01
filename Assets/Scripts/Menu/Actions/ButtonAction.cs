@@ -4,6 +4,6 @@ namespace Menu
 {
     public interface ButtonAction
     {
-        void Action();
+        void Action(); // Fonction qui sera appelée par chaque bouton
     }
 }
