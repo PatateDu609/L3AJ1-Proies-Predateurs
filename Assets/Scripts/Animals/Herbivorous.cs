@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class Herbivorous : Animal
 {
-    public List<Plant> targets;
+    public List<Entity> targets;
 }

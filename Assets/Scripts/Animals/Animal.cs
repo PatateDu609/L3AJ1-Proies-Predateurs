@@ -2,24 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Animal
+public class Animal : Entity
 {
-    public string id;
-
-    public float runningSpeed;
-    public static readonly float MAX_RUN_SPEED;
-
-    public float hunger;
-    public static readonly float MAX_HUNGER;
-
-    public float thirst;
-    public static readonly float MAX_THIRST;
-
-    public int age;
-    public static readonly int ADULT_AGE;
-    public static readonly int MAX_AGE;
-
-    public readonly bool isMale; // gender
-    public readonly float pregnancyTime;
-    public readonly int nbOfBabyPerLitter;
+    public float hunger; // actual hunger (if low will seek a target, if 0 dies)
+    public float MAX_HUNGER; // hunger cap (if reached will not try to eat more)
+    public float thirst; // actuel thirst (if low will seek water, if 0 dies)
+    public float MAX_THIRST; // thirst cap (if reached will not try to drink more)
+    public float runningSpeed; // the actual speed
+    public float MAX_RUN_SPEED; // the maximum speed
+    public bool isMale; // gender (true = male, false = female)
+    public float pregnancyTime; // duration of pregnancy
+    public int nbOfBabyPerLitter; // how many babies are born in one go
+    public float interactionLevel; // measures how the animal interact with other animals (negative = afraid, 0 = neutral, positive = aggressive)
 }

@@ -4,7 +4,5 @@ using UnityEngine;
 
 public class Carnivorous : Animal
 {
-    public readonly float ferocity; // likelyhood to attack other
-
-    public List<Animal> targets;
+    public List<Entity> targets;
 }
