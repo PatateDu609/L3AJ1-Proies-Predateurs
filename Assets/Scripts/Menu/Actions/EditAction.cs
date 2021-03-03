@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+using Environment;
 
 namespace Menu
 {
@@ -8,13 +8,22 @@ namespace Menu
         // Monde à éditer.
         public WorldAction.WorldOptions worldPreset;
 
+        public static Parameters parameters;
+
         public void Action()
         {
             switch (worldPreset)
             {
                 case WorldAction.WorldOptions.WorldPreset1:
+                    parameters = Parameters.Load(Application.dataPath + "/data/JSON/" + "world1.json");
+                    LoadScene.Load("ParameterMenu");
+                    break;
                 case WorldAction.WorldOptions.WorldPreset2:
+                    parameters = Parameters.Load(Application.dataPath + "/data/JSON/" + "world2.json");
+                    LoadScene.Load("ParameterMenu");
+                    break;
                 case WorldAction.WorldOptions.WorldPreset3:
+                    parameters = Parameters.Load(Application.dataPath + "/data/JSON/" + "world3.json");
                     LoadScene.Load("ParameterMenu");
                     break;
                 default:
