@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ namespace Environment
         public int amplitude;
         public int resourcesQuantity;
         public int seed;
+        public List<Entity> entities = new List<Entity>();
 
         public static Parameters Load()
         {
@@ -21,7 +23,14 @@ namespace Environment
                 fertility = 50,
                 amplitude = 15,
                 resourcesQuantity = 70,
-                seed = 0
+                seed = 0,
+                entities =
+                {
+                    new Rabbit
+                    {
+                        id = ""
+                    }
+                }
             };
         }
 

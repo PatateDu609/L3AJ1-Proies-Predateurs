@@ -1,8 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wolf : Carnivorous
+namespace Animals
 {
+    [Serializable]
+    public class Wolf : Carnivorous
+    {
 
+    }
 }

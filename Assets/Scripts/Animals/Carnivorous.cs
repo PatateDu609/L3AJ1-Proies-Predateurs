@@ -1,8 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Carnivorous : Animal
+namespace Animals
 {
-    public List<Entity> targets;
+    [Serializable]
+    public class Carnivorous : Animal
+    {
+        public List<Entity> targets;
+    }
 }
