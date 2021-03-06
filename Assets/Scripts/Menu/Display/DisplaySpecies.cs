@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Animals;
+using Environment;
 
 namespace Menu
 {
@@ -12,7 +12,7 @@ namespace Menu
     public class DisplaySpecies : MonoBehaviour
     {
         public enum SpeciesType { Prey, Predator }
-        
+
         // Définit quel onglet est sélectionné.
         [HideInInspector]
         public SpeciesType speciesType = SpeciesType.Prey;
@@ -40,9 +40,11 @@ namespace Menu
         private void DrawPredator()
         {
             List<string> species = new List<string>();
-            species.Add("Lion");
-            species.Add("Ours");
-            species.Add("Tigre");
+            EditAction.parameters = EditAction.parameters ?? Parameters.Load();
+
+            foreach (Entity entity in EditAction.parameters.entities)
+                if (entity is Carnivorous)
+                    species.Add(entity.id);
 
             DrawSpecies(species);
         }
@@ -50,9 +52,11 @@ namespace Menu
         private void DrawPrey()
         {
             List<string> species = new List<string>();
-            species.Add("Lapin");
-            species.Add("Vache");
-            species.Add("Mouton");
+            EditAction.parameters = EditAction.parameters ?? Parameters.Load();
+
+            foreach (Entity entity in EditAction.parameters.entities)
+                if (entity is Herbivorous || entity is Plant)
+                    species.Add(entity.id);
 
             DrawSpecies(species);
         }
@@ -64,10 +68,27 @@ namespace Menu
 
             foreach (string creature in species)
             {
+                string crea = creature.ToLower(), text = crea.Substring(0, 1).ToUpper() + crea.Substring(1);
                 GameObject instance = Instantiate(Resources.Load<GameObject>("Prefabs/Type"), transform);
-                instance.name = creature;
-                instance.GetComponentInChildren<Text>().text = creature;
+                instance.name = text;
+
+                AddScript(crea, instance);
+                instance.GetComponentInChildren<Text>().text = text;
             }
+        }
+
+        private void AddScript(string creature, GameObject instance)
+        {
+            GameObject script = new GameObject();
+            EntityAction entityAction = script.AddComponent<EntityAction>();
+            Button b = instance.GetComponent<Button>();
+
+            script.name = instance.name + "Script";
+
+            entityAction.id = creature;
+            script.transform.SetParent(instance.transform);
+
+            b.onClick.AddListener(entityAction.Action);
         }
     }
 }
