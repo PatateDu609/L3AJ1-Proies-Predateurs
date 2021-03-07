@@ -330,7 +330,7 @@ GameObject:
   - component: {fileID: 46767484}
   m_Layer: 5
   m_Name: MaxAge
-  m_TagString: Untagged
+  m_TagString: EntityOptions
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -725,7 +725,7 @@ GameObject:
   - component: {fileID: 131412193}
   m_Layer: 5
   m_Name: Litter
-  m_TagString: Untagged
+  m_TagString: AnimalOptions
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2575,7 +2575,7 @@ GameObject:
   - component: {fileID: 514850160}
   m_Layer: 5
   m_Name: Thirst
-  m_TagString: Untagged
+  m_TagString: AnimalOptions
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3928,7 +3928,7 @@ GameObject:
   - component: {fileID: 901311655}
   m_Layer: 5
   m_Name: Pregnancy
-  m_TagString: Untagged
+  m_TagString: AnimalOptions
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3986,7 +3986,7 @@ GameObject:
   - component: {fileID: 940428773}
   m_Layer: 5
   m_Name: Interaction
-  m_TagString: Untagged
+  m_TagString: AnimalOptions
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4044,7 +4044,7 @@ GameObject:
   - component: {fileID: 966411277}
   m_Layer: 5
   m_Name: AdultAge
-  m_TagString: Untagged
+  m_TagString: EntityOptions
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4268,7 +4268,7 @@ GameObject:
   - component: {fileID: 1014964594}
   m_Layer: 5
   m_Name: Hunger
-  m_TagString: Untagged
+  m_TagString: AnimalOptions
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5768,7 +5768,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1010171275}
   m_Direction: 3
   m_Value: 0.9999998
-  m_Size: 0.67834127
+  m_Size: 0.7373279
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6622,10 +6622,10 @@ RectTransform:
   m_Father: {fileID: 468211291}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.149}
-  m_AnchorMax: {x: 1, y: 0.9221477}
-  m_AnchoredPosition: {x: -0.17993164, y: 44.018982}
-  m_SizeDelta: {x: 0.36376953, y: 80.081055}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.17993164, y: -517.94104}
+  m_SizeDelta: {x: 0.36376953, y: 1036.1614}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1871623234
 MonoBehaviour:
@@ -6979,7 +6979,7 @@ GameObject:
   - component: {fileID: 1916337576}
   m_Layer: 5
   m_Name: Speed
-  m_TagString: Untagged
+  m_TagString: AnimalOptions
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

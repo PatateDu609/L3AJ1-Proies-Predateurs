@@ -7,21 +7,91 @@ namespace Menu
 {
     class EntityAction : MonoBehaviour, ButtonAction
     {
+        [HideInInspector]
         public string id;
+        [HideInInspector]
         public bool active = false;
 
-        private GameObject[] targets = null;
-        private GameObject[] animalTargets = null;
+        private static GameObject[] targets = null;
+        private static GameObject[] entityTargets = null;
+        private static GameObject[] animalTargets = null;
+
+        public static bool ResetTargets
+        {
+            set
+            {
+                if (value == true)
+                {
+                    targets = null;
+                    entityTargets = null;
+                    animalTargets = null;
+                }
+            }
+        }
 
         private void Start()
         {
-            targets = GameObject.FindGameObjectsWithTag("EntityOptions");
-            animalTargets = GameObject.FindGameObjectsWithTag("AnimalOptions");
+            targets = targets ?? GameObject.FindGameObjectsWithTag("EntityOptions");
+            entityTargets = entityTargets ?? GameObject.FindGameObjectsWithTag("EntityOptions");
+            animalTargets = animalTargets ?? GameObject.FindGameObjectsWithTag("AnimalOptions");
         }
 
         public void Action()
         {
-            UpdateValues(EditAction.parameters.entities.Find(e => e.id == id));
+            Entity entity = EditAction.parameters.entities.Find(e => e.id == id);
+            active = !active;
+
+            if (active)
+            {
+                GameObject.Find("SaveParameters").GetComponent<SaveAgentParams>().Action();
+                SaveAgentParams.entityAction = this;
+                UpdateValues(entity);
+            }
+            else
+            {
+                SaveValues(entity);
+                SaveAgentParams.entityAction = null;
+                foreach (GameObject go in targets)
+                    go.SetActive(false);
+            }
+        }
+
+        private void SaveValues(Entity entity)
+        {
+            Debug.Log("Saving : " + id);
+            foreach (GameObject gameObject in targets)
+            {
+                switch (gameObject.name)
+                {
+                    // Les propriétés suivantes ne sont modifiées que si entity est un animal.
+                    case "Hunger":
+                        ((Animal)entity).MAX_HUNGER = gameObject.GetComponentInChildren<Slider>().value;
+                        break;
+                    case "Thirst":
+                        ((Animal)entity).MAX_THIRST = gameObject.GetComponentInChildren<Slider>().value;
+                        break;
+                    case "Speed":
+                        ((Animal)entity).MAX_RUN_SPEED = gameObject.GetComponentInChildren<Slider>().value;
+                        break;
+                    case "Pregnancy":
+                        ((Animal)entity).pregnancyTime = gameObject.GetComponentInChildren<Slider>().value;
+                        break;
+                    case "Litter":
+                        ((Animal)entity).nbOfBabyPerLitter = Mathf.RoundToInt(gameObject.GetComponentInChildren<Slider>().value);
+                        break;
+                    case "Interaction":
+                        ((Animal)entity).interactionLevel = gameObject.GetComponentInChildren<Slider>().value;
+                        break;
+
+                    // Les propriétés suivantes sont modifiées quelque soit le type réel d'entity.
+                    case "MaxAge":
+                        entity.MAX_AGE = Mathf.RoundToInt(gameObject.GetComponentInChildren<Slider>().value);
+                        break;
+                    case "AdultAge":
+                        entity.ADULT_AGE = Mathf.RoundToInt(gameObject.GetComponentInChildren<Slider>().value);
+                        break;
+                }
+            }
         }
 
         private void UpdateValues(Entity entity)
@@ -33,10 +103,10 @@ namespace Menu
                 Array.Copy(animalTargets, 0, targets, l, animalTargets.Length);
             }
             else
-                targets = GameObject.FindGameObjectsWithTag("EntityOptions");
+                targets = entityTargets;
 
-            foreach (GameObject gameObject in animalTargets)
-                gameObject.SetActive(entity is Animal);
+            foreach (GameObject gameObject in targets)
+                gameObject.SetActive(true);
 
             foreach (GameObject gameObject in targets)
             {

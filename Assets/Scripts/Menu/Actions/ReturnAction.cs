@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Menu
 {
@@ -6,16 +7,19 @@ namespace Menu
     {
         public void Action()
         {
-            SaveEnvironmentalParams save = GameObject.Find("SaveParameters").GetComponent<SaveEnvironmentalParams>();
-            save.Action();
+            string scene = SceneManager.GetActiveScene().name;
+            if (scene == "EnvironmentalParametersMenu")
+            {
+                SaveEnvironmentalParams save = GameObject.Find("SaveParameters").GetComponent<SaveEnvironmentalParams>();
+                save.Action();
+            }
+            else if (scene == "AgentParametersMenu")
+            {
+                SaveAgentParams save = GameObject.Find("SaveParameters").GetComponent<SaveAgentParams>();
+                save.Action();
+                EntityAction.ResetTargets = true;
+            }
 
-            Environment.Parameters p = EditAction.parameters;
-
-            Debug.Log("aridity : " + p.aridity);
-            Debug.Log("amplitude : " + p.amplitude);
-            Debug.Log("fertility : " + p.fertility);
-            Debug.Log("resourcesQuantity : " + p.resourcesQuantity);
-            Debug.Log("seed : " + p.seed);
 
             if (PreviousMenu.sceneStack.Count != 0)
                 LoadScene.Load(PreviousMenu.sceneStack.Pop(), true);
