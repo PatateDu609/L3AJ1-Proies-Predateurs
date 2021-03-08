@@ -18,14 +18,14 @@ public class MoveCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetAxis("Vertical") > 0) // Quand on appuie sur la flèche du haut, alors on se déplace vers l'avant (sur l'axe z positif)
-            transform.Translate(transform.TransformDirection(Vector3.forward) * speed);
-        if (Input.GetAxis("Vertical") < 0) // Quand on appuie sur la flèche du bas, alors on se déplace vers l'arrière (sur l'axe z négatif)
-            transform.Translate(transform.TransformDirection(Vector3.back) * speed);
-        if (Input.GetAxis("Horizontal") > 0) // Quand on appuie sur la flèche de droite, alors on se déplace vers la droite (sur l'axe x positif)
-            transform.Translate(transform.TransformDirection(Vector3.right) * speed);
-        if (Input.GetAxis("Horizontal") < 0) // Quand on appuie sur la flèche de gauche, alors on se déplace vers la gauche (sur l'axe x négatif)
-            transform.Translate(transform.TransformDirection(Vector3.left) * speed);
+        if (Input.GetButton("Up")) 
+            transform.Translate(Vector3.forward * speed);
+        if (Input.GetButton("Down")) 
+            transform.Translate(Vector3.back * speed);
+        if (Input.GetButton("Right")) 
+            transform.Translate(Vector3.right * speed);
+        if (Input.GetButton("Left")) 
+            transform.Translate(Vector3.left * speed);
 
 
 
