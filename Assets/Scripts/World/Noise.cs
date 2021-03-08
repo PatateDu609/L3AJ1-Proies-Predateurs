@@ -89,7 +89,6 @@ public static class Noise
                 }
 
                 noiseMap[x, y] = noiseHeight;
-                Debug.Log(noiseSettings.scale);
             }
         }
     }
