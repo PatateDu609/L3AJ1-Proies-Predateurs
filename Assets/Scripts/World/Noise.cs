@@ -2,18 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/* Méthode de génération procédurale inspirée par la série de tutoriels de Sebastian Lague :
+ * https://www.youtube.com/playlist?list=PLFt_AvWsXl0eBW2EiBtl_sxmDtSgZBxB3
+ */
+
 public static class Noise
 {
     private static NoiseSettings noiseSettings;
 
     /// <summary>
-    /// Génération de la NoiseMap finale
+    /// Génération de la NoiseMap finale. Elle renvoie un tableau de float contenant les valeurs représentant les différents points de hauteurs de la carte
     /// </summary>
     /// <param name="noiseSettings"></param>
     /// <returns></returns>
     public static float[,] GenerateNoiseMap(NoiseSettings noiseSettings)
     {
-            Noise.noiseSettings = noiseSettings;
+        Noise.noiseSettings = noiseSettings;
 
         float[,] noiseMap = new float[noiseSettings.width, noiseSettings.height];
         float maxNoiseHeight = float.MinValue;
@@ -68,12 +73,13 @@ public static class Noise
                 float frequency = 1;
                 float noiseHeight = 0;
 
+                //Génération d'une NoiseMap par octave
                 for (int i = 0; i < noiseSettings.octaves; i++)
                 {
                     float sampleX = (x - halfWidth) / noiseSettings.scale * frequency + octaveOffsets[i].x;
                     float sampleY = (y - halfHeight) / noiseSettings.scale * frequency + octaveOffsets[i].y;
 
-                    float perlin = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
+                    float perlin = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1; //Affecte aux coordonnées sampleX et sampleY une valeur de Perlin comprise entre 0.0 et 1.0 représentant la couleur du point
                     noiseHeight += perlin * amplitude;
                     amplitude *= noiseSettings.persistance;
                     frequency *= noiseSettings.lacunarity;
