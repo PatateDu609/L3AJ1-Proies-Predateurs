@@ -30,10 +30,6 @@ public class MapGenerator : MonoBehaviour
     public TerrainType[] regions;
 
 
-    private void Start()
-    {
-        DrawMapInEditor();
-    }
 
     /// <summary>
     /// Permet de charger le monde et ses textures lors du lancement
