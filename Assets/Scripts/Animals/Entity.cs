@@ -3,20 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Environment;
+
 namespace Animals
 {
     [Serializable]
-    public class Entity : ScriptableObject
+    public abstract class Entity : ScriptableObject
     {
-        public string id;
-        [NonSerialized]
-        public int age; // actual age 
-        public int ADULT_AGE; // indicate if able to reproduce
-        public int MAX_AGE; // age of death
+        public Dictionary<string, Parameters.ParameterEntry> parameters = new Dictionary<string, Parameters.ParameterEntry>();
 
-        [NonSerialized]
-        public bool isEdible; // can be eaten or not
-        [NonSerialized]
-        public bool isAlive; // alive or dead
+        public Entity()
+        {
+            parameters.Add("id", new Parameters.ParameterEntry("id", ""));
+            parameters.Add("age", new Parameters.ParameterEntry("age", 0, false)); // actual age
+            parameters.Add("ADULT_AGE", new Parameters.ParameterEntry("ADULT_AGE", "Âge adulte", 0, Parameters.ParameterEntry.Type.Slider)); // indicate if able to reproduce
+            parameters.Add("MAX_AGE", new Parameters.ParameterEntry("MAX_AGE", "Âge maximal", 0, Parameters.ParameterEntry.Type.Slider)); // age of death
+            parameters.Add("isEdible", new Parameters.ParameterEntry("isEdible", true, false)); // can be eaten or not
+            parameters.Add("isAlive", new Parameters.ParameterEntry("isAlive", true, false)); // alive or dead
+        }
     }
 }

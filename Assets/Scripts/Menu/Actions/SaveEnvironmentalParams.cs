@@ -6,28 +6,18 @@ namespace Menu
 {
     class SaveEnvironmentalParams : MonoBehaviour, ButtonAction
     {
-        public Slider aridity;
-        public Slider amplitude;
-        public Slider fertility;
-        public Slider resourcesQuantity;
-        public InputField seed;
-
         public void Action()
         {
-            Parameters parameters = EditAction.parameters ?? new Parameters();
+            Parameters parameters = EditAction.parameters ?? Parameters.Load();
 
-            parameters.aridity = Mathf.FloorToInt(aridity.value);
-            parameters.amplitude = Mathf.FloorToInt(amplitude.value);
-            parameters.fertility = Mathf.FloorToInt(fertility.value);
-            parameters.resourcesQuantity = Mathf.FloorToInt(resourcesQuantity.value);
-
-            try
+            foreach (var entry in parameters.parameters)
             {
-                parameters.seed = Mathf.Max(int.Parse(seed.text), 0);
-            }
-            catch (System.OverflowException)
-            {
-                parameters.seed = int.MaxValue;
+                if (entry.Key == "entities")
+                    continue;
+                if (entry.Value.type == Parameters.ParameterEntry.Type.Slider)
+                    parameters.parameters[entry.Key].value = GameObject.Find(entry.Key).GetComponentInChildren<Slider>().value;
+                else if (entry.Value.type == Parameters.ParameterEntry.Type.Input)
+                    parameters.parameters[entry.Key].value = int.Parse(GameObject.Find(entry.Key + "Layout").GetComponentInChildren<InputField>().text);
             }
 
             EditAction.parameters = parameters;

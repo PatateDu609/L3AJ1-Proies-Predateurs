@@ -42,9 +42,9 @@ namespace Menu
             List<string> species = new List<string>();
             EditAction.parameters = EditAction.parameters ?? Parameters.Load();
 
-            foreach (Entity entity in EditAction.parameters.entities)
+            foreach (Entity entity in (List<Entity>)EditAction.parameters.parameters["entities"].value)
                 if (entity is Carnivorous)
-                    species.Add(entity.id);
+                    species.Add(entity.parameters["id"].value);
 
             DrawSpecies(species);
         }
@@ -54,9 +54,9 @@ namespace Menu
             List<string> species = new List<string>();
             EditAction.parameters = EditAction.parameters ?? Parameters.Load();
 
-            foreach (Entity entity in EditAction.parameters.entities)
+            foreach (Entity entity in (List<Entity>)EditAction.parameters.parameters["entities"].value)
                 if (entity is Herbivorous || entity is Plant)
-                    species.Add(entity.id);
+                    species.Add(entity.parameters["id"].value);
 
             DrawSpecies(species);
         }

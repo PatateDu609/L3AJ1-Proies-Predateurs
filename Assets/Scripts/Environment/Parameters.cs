@@ -6,58 +6,55 @@ using Animals;
 
 namespace Environment
 {
-    [Serializable]
-    class Parameters
+    public class Parameters
     {
-        public int aridity;
-        public int fertility;
-        public int amplitude;
-        public int resourcesQuantity;
-        public int seed;
-        public List<Entity> entities = new List<Entity>();
+        public Dictionary<string, ParameterEntry> parameters = new Dictionary<string, ParameterEntry>();
 
         public static Parameters Load()
         {
             Carrot carrot = ScriptableObject.CreateInstance<Carrot>();
-            carrot.id = "carrot";
-            carrot.ADULT_AGE = 1;
-            carrot.MAX_AGE = 2;
+            carrot.parameters["id"].value = "carrot";
+            carrot.parameters["ADULT_AGE"].value = 1;
+            carrot.parameters["MAX_AGE"].value = 2;
 
             Wolf wolf = ScriptableObject.CreateInstance<Wolf>();
-            wolf.id = "wolf";
-            wolf.ADULT_AGE = 4;
-            wolf.MAX_AGE = 20;
-            wolf.MAX_HUNGER = 40;
-            wolf.MAX_THIRST = 20;
-            wolf.MAX_RUN_SPEED = 50;
-            wolf.pregnancyTime = 4;
-            wolf.nbOfBabyPerLitter = 3;
-            wolf.interactionLevel = 5;
+            wolf.parameters["id"].value = "wolf";
+            wolf.parameters["ADULT_AGE"].value = 4;
+            wolf.parameters["MAX_AGE"].value = 20;
+            wolf.parameters["MAX_HUNGER"].value = 40;
+            wolf.parameters["MAX_THIRST"].value = 20;
+            wolf.parameters["MAX_RUN_SPEED"].value = 50;
+            wolf.parameters["pregnancyTime"].value = 4;
+            wolf.parameters["nbOfBabyPerLitter"].value = 3;
+            wolf.parameters["interactionLevel"].value = 5;
 
             Rabbit rabbit = ScriptableObject.CreateInstance<Rabbit>();
-            rabbit.id = "rabbit";
-            rabbit.ADULT_AGE = 2;
-            rabbit.MAX_AGE = 18;
-            rabbit.MAX_HUNGER = 25;
-            rabbit.MAX_THIRST = 15;
-            rabbit.MAX_RUN_SPEED = 45;
-            rabbit.pregnancyTime = 4;
-            rabbit.nbOfBabyPerLitter = 3;
-            rabbit.interactionLevel = -8;
-            return new Parameters
-            {
-                aridity = 20,
-                fertility = 50,
-                amplitude = 15,
-                resourcesQuantity = 70,
-                seed = 0,
-                entities =
-                {
+
+            rabbit.parameters["id"].value = "rabbit";
+            rabbit.parameters["ADULT_AGE"].value = 2;
+            rabbit.parameters["MAX_AGE"].value = 18;
+            rabbit.parameters["MAX_HUNGER"].value = 25;
+            rabbit.parameters["MAX_THIRST"].value = 15;
+            rabbit.parameters["MAX_RUN_SPEED"].value = 45;
+            rabbit.parameters["pregnancyTime"].value = 4;
+            rabbit.parameters["nbOfBabyPerLitter"].value = 3;
+            rabbit.parameters["interactionLevel"].value = -8;
+
+            Parameters p = new Parameters();
+
+            p.parameters.Add("aridity", new ParameterEntry("aridity", "Aridité", 20, ParameterEntry.Type.Slider));
+            p.parameters.Add("fertility", new ParameterEntry("fertility", "Fertilité", 50, ParameterEntry.Type.Slider));
+            p.parameters.Add("amplitude", new ParameterEntry("amplitude", "Amplitude", 15, ParameterEntry.Type.Slider));
+            p.parameters.Add("resourcesQuantity", new ParameterEntry("resourcesQuantity", "Quantité de ressources", 70, ParameterEntry.Type.Slider));
+            p.parameters.Add("seed", new ParameterEntry("seed", "Seed", 0, ParameterEntry.Type.Input));
+            p.parameters.Add("entities", new ParameterEntry("entities", new List<Entity>{
                     rabbit,
                     wolf,
                     carrot
-                }
-            };
+            }
+            ));
+
+            return p;
         }
 
         public static Parameters Load(string name)
@@ -65,7 +62,12 @@ namespace Environment
             try
             {
                 string json = File.ReadAllText(name);
-                return JsonUtility.FromJson<Parameters>(json);
+                ParametersList list = JsonUtility.FromJson<ParametersList>(json);
+
+                return new Parameters
+                {
+                    parameters = list.toDict()
+                };
             }
             catch
             { }
@@ -75,7 +77,60 @@ namespace Environment
 
         public static void Save(Parameters param, string name)
         {
-            File.WriteAllText(name, JsonUtility.ToJson(param));
+            File.WriteAllText(name, JsonUtility.ToJson(ParametersList.toList(param.parameters)));
+        }
+
+        [Serializable]
+        private struct ParametersList
+        {
+            List<ParameterEntry> entries;
+
+            public Dictionary<string, ParameterEntry> toDict()
+            {
+                Dictionary<string, ParameterEntry> result = new Dictionary<string, ParameterEntry>();
+
+                foreach (ParameterEntry entry in entries)
+                    result.Add(entry.id, entry);
+
+                return result;
+            }
+
+            public static ParametersList toList(Dictionary<string, ParameterEntry> dict)
+            {
+                ParametersList result = new ParametersList();
+
+                foreach (KeyValuePair<string, ParameterEntry> entry in dict)
+                    result.entries.Add(entry.Value);
+
+                return result;
+            }
+        }
+
+        [Serializable]
+        public class ParameterEntry
+        {
+            public string id;
+            public string menuText = null;
+            public dynamic value;
+            public bool serialize = true;
+            public Type type = Type.None;
+
+            public enum Type { None, Input, Slider }
+
+            public ParameterEntry(string id, string menuText, dynamic value, Type type, bool serialize = true)
+            {
+                this.id = id;
+                this.value = value;
+                this.menuText = menuText;
+                this.serialize = serialize;
+                this.type = type;
+            }
+
+            public ParameterEntry(string id, dynamic value, bool serialize = true)
+            {
+                this.id = id;
+                this.value = value;
+            }
         }
     }
 }

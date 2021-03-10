@@ -14,16 +14,7 @@ namespace Menu
             if (Input.GetButtonDown("Back"))
             {
                 if (action != null)
-                {
                     action.GetComponent<ButtonAction>().Action();
-                    Environment.Parameters p = EditAction.parameters;
-
-                    Debug.Log("aridity : " + p.aridity);
-                    Debug.Log("amplitude : " + p.amplitude);
-                    Debug.Log("fertility : " + p.fertility);
-                    Debug.Log("resourcesQuantity : " + p.resourcesQuantity);
-                    Debug.Log("seed : " + p.seed);
-                }
                 LoadScene.Load(sceneStack.Pop(), true);
             }
         }

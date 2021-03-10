@@ -20,7 +20,6 @@ namespace Menu
                 EntityAction.ResetTargets = true;
             }
 
-
             if (PreviousMenu.sceneStack.Count != 0)
                 LoadScene.Load(PreviousMenu.sceneStack.Pop(), true);
             else

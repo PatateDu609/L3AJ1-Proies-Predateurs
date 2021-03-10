@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Animals;
@@ -20,9 +22,9 @@ namespace Menu
         {
             set
             {
-                if (value == true)
+                if (value)
                 {
-                    targets = null;
+                    targets = null; 
                     entityTargets = null;
                     animalTargets = null;
                 }
@@ -34,11 +36,16 @@ namespace Menu
             targets = targets ?? GameObject.FindGameObjectsWithTag("EntityOptions");
             entityTargets = entityTargets ?? GameObject.FindGameObjectsWithTag("EntityOptions");
             animalTargets = animalTargets ?? GameObject.FindGameObjectsWithTag("AnimalOptions");
+
+            foreach (GameObject target in targets)
+                target.SetActive(false);
+            foreach (GameObject target in animalTargets)
+                target.SetActive(false);
         }
 
         public void Action()
         {
-            Entity entity = EditAction.parameters.entities.Find(e => e.id == id);
+            Entity entity = ((List<Entity>)EditAction.parameters.parameters["entities"].value).Find(e => e.parameters["id"].value == id);
             active = !active;
 
             if (active)
@@ -60,38 +67,7 @@ namespace Menu
         {
             Debug.Log("Saving : " + id);
             foreach (GameObject gameObject in targets)
-            {
-                switch (gameObject.name)
-                {
-                    // Les propriétés suivantes ne sont modifiées que si entity est un animal.
-                    case "Hunger":
-                        ((Animal)entity).MAX_HUNGER = gameObject.GetComponentInChildren<Slider>().value;
-                        break;
-                    case "Thirst":
-                        ((Animal)entity).MAX_THIRST = gameObject.GetComponentInChildren<Slider>().value;
-                        break;
-                    case "Speed":
-                        ((Animal)entity).MAX_RUN_SPEED = gameObject.GetComponentInChildren<Slider>().value;
-                        break;
-                    case "Pregnancy":
-                        ((Animal)entity).pregnancyTime = gameObject.GetComponentInChildren<Slider>().value;
-                        break;
-                    case "Litter":
-                        ((Animal)entity).nbOfBabyPerLitter = Mathf.RoundToInt(gameObject.GetComponentInChildren<Slider>().value);
-                        break;
-                    case "Interaction":
-                        ((Animal)entity).interactionLevel = gameObject.GetComponentInChildren<Slider>().value;
-                        break;
-
-                    // Les propriétés suivantes sont modifiées quelque soit le type réel d'entity.
-                    case "MaxAge":
-                        entity.MAX_AGE = Mathf.RoundToInt(gameObject.GetComponentInChildren<Slider>().value);
-                        break;
-                    case "AdultAge":
-                        entity.ADULT_AGE = Mathf.RoundToInt(gameObject.GetComponentInChildren<Slider>().value);
-                        break;
-                }
-            }
+                entity.parameters[gameObject.name].value = gameObject.GetComponentInChildren<Slider>().value;
         }
 
         private void UpdateValues(Entity entity)
@@ -109,38 +85,7 @@ namespace Menu
                 gameObject.SetActive(true);
 
             foreach (GameObject gameObject in targets)
-            {
-                switch (gameObject.name)
-                {
-                    // Les propriétés suivantes ne sont modifiées que si entity est un animal.
-                    case "Hunger":
-                        gameObject.GetComponentInChildren<Slider>().value = ((Animal)entity).MAX_HUNGER;
-                        break;
-                    case "Thirst":
-                        gameObject.GetComponentInChildren<Slider>().value = ((Animal)entity).MAX_THIRST;
-                        break;
-                    case "Speed":
-                        gameObject.GetComponentInChildren<Slider>().value = ((Animal)entity).MAX_RUN_SPEED;
-                        break;
-                    case "Pregnancy":
-                        gameObject.GetComponentInChildren<Slider>().value = ((Animal)entity).pregnancyTime;
-                        break;
-                    case "Litter":
-                        gameObject.GetComponentInChildren<Slider>().value = ((Animal)entity).nbOfBabyPerLitter;
-                        break;
-                    case "Interaction":
-                        gameObject.GetComponentInChildren<Slider>().value = ((Animal)entity).interactionLevel;
-                        break;
-
-                    // Les propriétés suivantes sont modifiées quelque soit le type réel d'entity.
-                    case "MaxAge":
-                        gameObject.GetComponentInChildren<Slider>().value = entity.MAX_AGE;
-                        break;
-                    case "AdultAge":
-                        gameObject.GetComponentInChildren<Slider>().value = entity.ADULT_AGE;
-                        break;
-                }
-            }
+                gameObject.GetComponentInChildren<Slider>().value = entity.parameters[gameObject.name].value;
         }
     }
 }
