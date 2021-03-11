@@ -6,8 +6,8 @@ using UnityEngine;
 namespace Animals
 {
     [Serializable]
-    public class Herbivorous : Animal
+    public abstract class Herbivorous : Animal
     {
-        public List<Entity> targets;
+        
     }
 }
