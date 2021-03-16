@@ -10,9 +10,8 @@ namespace Animals
     public abstract class Animal : Entity
     {
         public List<Species> targets;
-        // utilise dans lookAround
-        public float minDistance = 1f;
-        public float maxDistance = 2f;
+        public Transform transform;
+        public Transform target;
 
         public Animal() : base()
         {
@@ -47,7 +46,8 @@ namespace Animals
             }
             else if (isThirsty())
             {
-                lookForWater();
+                //TODO
+                //lookForWater();
             }
             else
             {
@@ -55,9 +55,11 @@ namespace Animals
             }
         }
 
-        // moves in a random direction (a tester)
+        // moves in a random direction
         public void lookAround()
         {
+            float minDistance = 1f;
+            float maxDistance = 2f;
             GetTransform().Rotate(Vector3.forward, UnityEngine.Random.Range(0, 360));
             GetRigidbody().MovePosition(GetRigidbody().position + GetTransform().up * UnityEngine.Random.Range(minDistance, maxDistance) * parameters["runningSpeed"].value);
         }
@@ -68,13 +70,9 @@ namespace Animals
 
             if (Physics.Raycast(GetTransform().position, -Vector3.up, out hit))
             {
-                // TODO : a completer
-                // spaghetti code : targets.contains(hit.GetSpecies()) && hit.isEdible == true
-                // le probleme c'est que hit doit être un RaycastHit
-                // comment obtenir un potentiel objet Entity a partir de ça ?
-                if (true) 
+                if (this.targets.Contains(hit.transform.gameObject.GetComponentInChildren<Species>())) 
                 {
-
+                    target = hit.transform;
                 }
             }
             else
@@ -83,11 +81,10 @@ namespace Animals
             }
         }
 
+        /*
         private void lookForWater()
         {
-            // TODO : a completer
-            // je ne sais pas comment est représentée l'eau dans la scene :x
-            if (true)
+            if ()
             {
 
             }
@@ -95,6 +92,12 @@ namespace Animals
             {
                 lookAround();
             }
+        }
+        */
+
+        private void moveToTarget()
+        {
+            transform.position += (transform.position - target.position).normalized * parameters["runningSpeed"].value * Time.deltaTime;
         }
 
         public void eat(Entity e)
@@ -109,7 +112,14 @@ namespace Animals
 
         void FixedUpdate()
         {
-            lookForRessource();
+            if (target == null)
+            {
+                lookForRessource();
+            }
+            else
+            {
+                moveToTarget();
+            }
         }
     }
 }
