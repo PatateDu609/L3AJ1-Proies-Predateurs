@@ -8,6 +8,5 @@ namespace Animals
     [Serializable]
     public abstract class Herbivorous : Animal
     {
-        
     }
 }

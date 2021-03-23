@@ -15,6 +15,8 @@ namespace Animals
         private Rigidbody rigidbody;
         private Species species;
 
+        public GameObject gameObject;
+
         public Entity()
         {
             parameters.Add("id", new Parameters.ParameterEntry("id", ""));
@@ -39,6 +41,11 @@ namespace Animals
         public Species GetSpecies()
         {
             return species;
+        }
+
+        virtual public void FixedUpdate()
+        {
+
         }
     }
 }

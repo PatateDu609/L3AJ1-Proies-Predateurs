@@ -21,9 +21,9 @@ namespace Environment
             wolf.parameters["id"].value = "wolf";
             wolf.parameters["ADULT_AGE"].value = 4;
             wolf.parameters["MAX_AGE"].value = 20;
-            wolf.parameters["MAX_HUNGER"].value = 40;
+            wolf.parameters["MAX_HUNGER"].value = 15; // 40
             wolf.parameters["MAX_THIRST"].value = 20;
-            wolf.parameters["MAX_RUN_SPEED"].value = 50;
+            wolf.parameters["MAX_RUN_SPEED"].value = 20; // 50
             wolf.parameters["pregnancyTime"].value = 4;
             wolf.parameters["nbOfBabyPerLitter"].value = 3;
             wolf.parameters["interactionLevel"].value = 5;
@@ -35,7 +35,7 @@ namespace Environment
             rabbit.parameters["MAX_AGE"].value = 18;
             rabbit.parameters["MAX_HUNGER"].value = 25;
             rabbit.parameters["MAX_THIRST"].value = 15;
-            rabbit.parameters["MAX_RUN_SPEED"].value = 45;
+            rabbit.parameters["MAX_RUN_SPEED"].value = 0; // 45 is the true value
             rabbit.parameters["pregnancyTime"].value = 4;
             rabbit.parameters["nbOfBabyPerLitter"].value = 3;
             rabbit.parameters["interactionLevel"].value = -8;

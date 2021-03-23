@@ -8,6 +8,9 @@ namespace Animals
     [Serializable]
     public class Wolf : Carnivorous
     {
-
+        public Wolf() : base()
+        {
+            targets.Add(Species.Rabbit);
+        }
     }
 }
