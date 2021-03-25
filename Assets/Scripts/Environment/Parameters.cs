@@ -43,7 +43,7 @@ namespace Environment
             Parameters p = new Parameters();
 
             p.parameters.Add("aridity", new ParameterEntry("aridity", "Aridité", 20, ParameterEntry.Type.Slider));
-            p.parameters.Add("fertility", new ParameterEntry("fertility", "Fertilité", 50, ParameterEntry.Type.Slider));
+            p.parameters.Add("fertility", new ParameterEntry("fertility", "Fertilité des sols", 50, ParameterEntry.Type.Slider));
             p.parameters.Add("amplitude", new ParameterEntry("amplitude", "Amplitude", 15, ParameterEntry.Type.Slider));
             p.parameters.Add("resourcesQuantity", new ParameterEntry("resourcesQuantity", "Quantité de ressources", 70, ParameterEntry.Type.Slider));
             p.parameters.Add("seed", new ParameterEntry("seed", "Seed", 0, ParameterEntry.Type.Input));

@@ -7,6 +7,9 @@ TagManager:
   - AnimalOptions
   - PlantOptions
   - EntityOptions
+  - BasicStats
+  - MidStats
+  - AdvancedStats
   layers:
   - Default
   - TransparentFX
@@ -16,7 +19,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Stats
   - 
   - 
   - 
