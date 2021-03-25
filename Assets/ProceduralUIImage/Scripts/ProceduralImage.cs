@@ -16,8 +16,10 @@ namespace UnityEngine.UI.ProceduralImage
     public class ProceduralImage : Image
     {
         [SerializeField] private float borderWidth;
+        [SerializeField] private bool useStraightEdges;
         private ProceduralImageModifier modifier;
         private static Material materialInstance;
+        private static Material materialInstance_straight;
         private static Material DefaultProceduralImageMaterial
         {
             get
@@ -31,6 +33,21 @@ namespace UnityEngine.UI.ProceduralImage
             set
             {
                 materialInstance = value;
+            }
+        }
+        private static Material StraightProceduralImageMaterial
+        {
+            get
+            {
+                if (materialInstance_straight == null)
+                {
+                    materialInstance_straight = new Material(Shader.Find("UI/Procedural UI Image_straight"));
+                }
+                return materialInstance_straight;
+            }
+            set
+            {
+                materialInstance_straight = value;
             }
         }
         [SerializeField] private float falloffDistance = 1;
@@ -47,6 +64,20 @@ namespace UnityEngine.UI.ProceduralImage
                 this.SetVerticesDirty();
             }
         }
+
+        public bool UseStraightEdges
+        {
+            get
+            {
+                return useStraightEdges;
+            }
+            set
+            {
+                useStraightEdges = value;
+                this.SetMaterialDirty();
+            }
+        }
+
 
         public float FalloffDistance
         {
@@ -187,7 +218,7 @@ namespace UnityEngine.UI.ProceduralImage
             //Allocates mem
             //float scaleFactor = Mathf.Min(r.width / (vec.x + vec.y), r.width / (vec.z + vec.w), r.height / (vec.x + vec.w), r.height / (vec.z + vec.y), 1);
             //Allocation free:
-            float scaleFactor = Mathf.Min (Mathf.Min (Mathf.Min (Mathf.Min (r.width / (vec.x + vec.y), r.width / (vec.z + vec.w)), r.height / (vec.x + vec.w)), r.height / (vec.z + vec.y)), 1f);
+            float scaleFactor = Mathf.Min(Mathf.Min(Mathf.Min(Mathf.Min(r.width / (vec.x + vec.y), r.width / (vec.z + vec.w)), r.height / (vec.x + vec.w)), r.height / (vec.z + vec.y)), 1f);
             return vec * scaleFactor;
         }
 
@@ -257,7 +288,7 @@ namespace UnityEngine.UI.ProceduralImage
             {
                 if (base.m_Material == null)
                 {
-                    return DefaultProceduralImageMaterial;
+                    return useStraightEdges ? StraightProceduralImageMaterial : DefaultProceduralImageMaterial;
                 }
                 else
                 {
@@ -269,6 +300,45 @@ namespace UnityEngine.UI.ProceduralImage
             {
                 base.material = value;
             }
+        }
+        public override bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
+        {
+            if (alphaHitTestMinimumThreshold <= 0)
+                return true;
+
+            if (alphaHitTestMinimumThreshold > 1)
+                return false;
+
+            Vector2 local;
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenPoint, eventCamera, out local))
+                return false;
+
+            Rect rect = GetPixelAdjustedRect();
+
+            // Convert to have lower left corner as reference point.
+            local.x += rectTransform.pivot.x * rect.width;
+            local.y += rectTransform.pivot.y * rect.height;
+
+            Vector4 radius = FixRadius(Modifier.CalculateRadius(rect));
+
+
+            if (local.x < radius.x && rect.height - local.y < radius.x)
+            {
+                return Vector2.Distance(local, new Vector2(radius.x, rect.height - radius.x)) < radius.x;
+            }
+            if (rect.width - local.x < radius.y && rect.height - local.y < radius.y)
+            {
+                return Vector2.Distance(local, new Vector2(rect.width - radius.y, rect.height - radius.y)) < radius.y;
+            }
+            if (rect.width - local.x < radius.z && local.y < radius.z)
+            {
+                return Vector2.Distance(local, new Vector2(rect.width - radius.z, radius.z)) < radius.z;
+            }
+            if (local.x < radius.w && local.y < radius.w)
+            {
+                return Vector2.Distance(local, new Vector2(radius.w, radius.w)) < radius.w;
+            }
+            return true;
         }
 
 #if UNITY_EDITOR

@@ -15,6 +15,8 @@ namespace UnityEditor.UI
 
         SerializedProperty m_borderWidth;
         SerializedProperty m_falloffDist;
+        SerializedProperty m_useStraightEdges;
+
 
         SerializedProperty m_FillMethod;
         SerializedProperty m_FillOrigin;
@@ -50,6 +52,8 @@ namespace UnityEditor.UI
 
             m_borderWidth = serializedObject.FindProperty("borderWidth");
             m_falloffDist = serializedObject.FindProperty("falloffDistance");
+            m_useStraightEdges = serializedObject.FindProperty("useStraightEdges");
+
 
             if ((target as ProceduralImage).GetComponent<ProceduralImageModifier>() != null)
             {
@@ -86,11 +90,13 @@ namespace UnityEditor.UI
 
             EditorGUILayout.PropertyField(m_Color);
             //EditorGUILayout.PropertyField(m_Material);
-            
+
             RaycastControlsGUI();
             ProceduralImageTypeGUI();
             EditorGUILayout.Space();
             ModifierGUI();
+            
+            EditorGUILayout.PropertyField(m_useStraightEdges);
             EditorGUILayout.PropertyField(m_borderWidth);
             EditorGUILayout.PropertyField(m_falloffDist);
             serializedObject.ApplyModifiedProperties();
@@ -216,7 +222,7 @@ namespace UnityEditor.UI
                 }
             }
 
-            if(!hasMultipleValues)
+            if (!hasMultipleValues)
             {
                 int index = EditorGUILayout.Popup(new GUIContent("Modifier Type"), selectedId, con);
                 if (selectedId != index)
@@ -232,7 +238,8 @@ namespace UnityEditor.UI
                     EditorGUIUtility.ExitGUI();
                 }
             }
-            else{
+            else
+            {
                 int index = EditorGUILayout.Popup(new GUIContent("Modifier Type"), -1, con);
                 if (index != -1)
                 {
