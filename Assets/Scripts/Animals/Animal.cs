@@ -138,7 +138,7 @@ namespace Animals
             {
                 if (target == null)
                 {
-                    lookForRessource();
+                    //lookForRessource();
                 }
                 else
                 {
