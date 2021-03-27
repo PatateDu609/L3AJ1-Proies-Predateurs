@@ -70,10 +70,18 @@ namespace Animals
         private void lookForFood()
         {
             RaycastHit hit;
-            Vector3 dir = gameObject.transform.TransformDirection(Vector3.forward * 2 * gameObject.transform.localScale.y);
 
-            Debug.DrawRay(gameObject.transform.position, dir, Color.green, 5, false);
-            if (Physics.Raycast(gameObject.transform.position, dir, out hit))
+            Vector3 front = gameObject.transform.TransformDirection(Vector3.forward * 2 * gameObject.transform.localScale.y);
+            Vector3 left = Quaternion.AngleAxis(15, Vector3.up) * front;
+            Vector3 right = Quaternion.AngleAxis(-15, Vector3.up) * front;
+
+            Debug.DrawRay(gameObject.transform.position, front, Color.green, 5, false);
+            Debug.DrawRay(gameObject.transform.position, left, Color.green, 5, false);
+            Debug.DrawRay(gameObject.transform.position, right, Color.green, 5, false);
+
+            if (Physics.Raycast(gameObject.transform.position, front, out hit) 
+                || Physics.Raycast(gameObject.transform.position, left, out hit) 
+                || Physics.Raycast(gameObject.transform.position, right, out hit))
             {
                 if (this.targets.Contains(hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>().species))
                 {
