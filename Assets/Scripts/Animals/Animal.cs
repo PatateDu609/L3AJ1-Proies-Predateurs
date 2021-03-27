@@ -30,13 +30,13 @@ namespace Animals
 
         public bool isThirsty()
         {
-            return parameters["thirst"].value < parameters["MAX_THIRST"].value / 3; // the animal is thirsty if its actual thirst level is under the third of the max
+            return parameters["thirst"].value < parameters["MAX_THIRST"].value / 3; // the animal is thirsty if its current thirst level is under the third of the max
         }
 
         public bool isHungry()
         {
             return true;
-            //return parameters["hunger"].value < parameters["MAX_HUNGER"].value / 3; // the animal is hungry if its actual hunger level is under the third of the max
+            //return parameters["hunger"].value < parameters["MAX_HUNGER"].value / 3; // the animal is hungry if its current hunger level is under the third of the max
         }
 
         public void lookForRessource()
@@ -69,29 +69,36 @@ namespace Animals
 
         private void lookForFood()
         {
+            List<Vector3> vectors = new List<Vector3>();
+            Vector3 front = gameObject.transform.TransformDirection(Vector3.forward * 2 * gameObject.transform.localScale.y);
             RaycastHit hit;
 
-            Vector3 front = gameObject.transform.TransformDirection(Vector3.forward * 2 * gameObject.transform.localScale.y);
-            Vector3 left = Quaternion.AngleAxis(15, Vector3.up) * front;
-            Vector3 right = Quaternion.AngleAxis(-15, Vector3.up) * front;
-
-            Debug.DrawRay(gameObject.transform.position, front, Color.green, 5, false);
-            Debug.DrawRay(gameObject.transform.position, left, Color.green, 5, false);
-            Debug.DrawRay(gameObject.transform.position, right, Color.green, 5, false);
-
-            if (Physics.Raycast(gameObject.transform.position, front, out hit) 
-                || Physics.Raycast(gameObject.transform.position, left, out hit) 
-                || Physics.Raycast(gameObject.transform.position, right, out hit))
+            /*for (int i = -30; i <= 30; i += 10)
             {
-                if (this.targets.Contains(hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>().species))
+                vectors.Add(Quaternion.AngleAxis(i, Vector3.up) * front);
+                vectors.Add(Quaternion.AngleAxis(i, Vector3.right) * front);
+            }*/
+
+            for (int i = 0; i <= 30; i++)
+            {
+                vectors.Add(UnityEngine.Random.insideUnitCircle * 5);
+            }
+
+            foreach (Vector3 v in vectors)
+            {
+                Debug.DrawRay(gameObject.transform.position, v, Color.green, 5, false);
+                if (Physics.Raycast(gameObject.transform.position, v, out hit))
                 {
-                    target = hit.transform;
+                    if (this.targets.Contains(hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>().species))
+                    {
+                        target = hit.transform;
+                    }
                 }
-            }
-            else
-            {
-                lookAround();
-            }
+                else
+                {
+                    lookAround();
+                }
+            } 
         }
 
         /*
