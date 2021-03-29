@@ -30,6 +30,7 @@ namespace Agents
             {
                 animal.parameters["thirst"].value = animal.parameters["MAX_THIRST"].value;
                 animal.parameters["hunger"].value = animal.parameters["MAX_HUNGER"].value;
+                (animal as Animal).Start();
             }
 
             animal.gameObject = gameObject;

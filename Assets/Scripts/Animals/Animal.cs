@@ -12,6 +12,7 @@ namespace Animals
         public List<Species> targets = new List<Species>();
         public Transform transform;
         public Transform target;
+        public List<Vector3> vectors = new List<Vector3>();
 
 
         public Animal() : base()
@@ -28,6 +29,17 @@ namespace Animals
             parameters.Add("interactionLevel", new Parameters.ParameterEntry("interactionLevel", "Niveau d'interaction", 0, Parameters.ParameterEntry.Type.Slider)); // measures how the animal interact with other animals (negative = afraid, 0 = neutral, positive = aggressive)
         }
 
+        public void Start()
+        {
+            for (int i = -30; i <= 30; i += 10)
+            {
+                for (int j = -20; j <= 20; j += 5)
+                {
+                    vectors.Add((Quaternion.AngleAxis(i, Vector3.right) * Quaternion.AngleAxis(j, Vector3.up) * -Vector3.forward).normalized * 5);
+                }
+            }
+        }
+
         public bool isThirsty()
         {
             return parameters["thirst"].value < parameters["MAX_THIRST"].value / 3; // the animal is thirsty if its current thirst level is under the third of the max
@@ -41,19 +53,19 @@ namespace Animals
 
         public void lookForRessource()
         {
-            //if (isHungry())
-            //{
-            //    //lookForFood();
-            //}
-            //else if (isThirsty())
-            //{
-            //    //TODO
-            //    //lookForWater();
-            //}
-            //else
-            //{
-            //}
-            lookAround();
+            if (isHungry())
+            {
+                lookForFood();
+            }
+            else if (isThirsty())
+            {
+                //todo
+                //lookForWater();
+            }
+            else
+            {
+               // lookAround();
+            }
         }
 
         // moves in a random direction
@@ -69,25 +81,14 @@ namespace Animals
 
         private void lookForFood()
         {
-            List<Vector3> vectors = new List<Vector3>();
             Vector3 front = gameObject.transform.TransformDirection(Vector3.forward * 2 * gameObject.transform.localScale.y);
             RaycastHit hit;
 
-            /*for (int i = -30; i <= 30; i += 10)
-            {
-                vectors.Add(Quaternion.AngleAxis(i, Vector3.up) * front);
-                vectors.Add(Quaternion.AngleAxis(i, Vector3.right) * front);
-            }*/
-
-            for (int i = 0; i <= 30; i++)
-            {
-                vectors.Add(UnityEngine.Random.insideUnitCircle * 5);
-            }
 
             foreach (Vector3 v in vectors)
             {
                 Debug.DrawRay(gameObject.transform.position, v, Color.green, 5, false);
-                if (Physics.Raycast(gameObject.transform.position, v, out hit))
+                /*if (Physics.Raycast(gameObject.transform.position, v, out hit))
                 {
                     if (this.targets.Contains(hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>().species))
                     {
@@ -96,8 +97,8 @@ namespace Animals
                 }
                 else
                 {
-                    lookAround();
-                }
+                    //lookAround();
+                }*/
             } 
         }
 
@@ -153,7 +154,7 @@ namespace Animals
             {
                 if (target == null)
                 {
-                    //lookForRessource();
+                    lookForRessource();
                 }
                 else
                 {
