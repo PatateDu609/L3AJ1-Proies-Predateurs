@@ -10,7 +10,7 @@ namespace Animals
     {
         public Wolf() : base()
         {
-            targets.Add(Species.Rabbit);
+
         }
     }
 }

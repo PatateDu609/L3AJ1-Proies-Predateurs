@@ -8,6 +8,6 @@ namespace Animals
     [Serializable]
     public abstract class Plant : Entity
     {
-        
+
     }
 }

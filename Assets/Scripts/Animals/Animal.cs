@@ -9,21 +9,18 @@ namespace Animals
     [Serializable]
     public abstract class Animal : Entity
     {
-        public List<Species> targets = new List<Species>();
-        public Transform transform;
-        public Transform target;
-        public List<Vector3> vectors = new List<Vector3>();
-
+        private List<Species> targets = new List<Species>();
+        private List<Vector3> vision = new List<Vector3>();
+        private float lastAction = -1;
 
         public Animal() : base()
         {
             parameters.Add("hunger", new Parameters.ParameterEntry("hunger", 0, false)); // actual hunger (if low will seek a target, if 0 dies)
             parameters.Add("MAX_HUNGER", new Parameters.ParameterEntry("MAX_HUNGER", "Niveau de satiété", 0, Parameters.ParameterEntry.Type.Slider)); // hunger cap (if reached will not try to eat more)
-            parameters.Add("thirst", new Parameters.ParameterEntry("thirst", 0, false)); // actuel thirst (if low will seek water, if 0 dies)
-            parameters.Add("MAX_THIRST", new Parameters.ParameterEntry("MAX_THIRST", "Niveau de satiété hydrique", 0, Parameters.ParameterEntry.Type.Slider)); // thirst cap (if reached will not try to drink more)
             parameters.Add("runningSpeed", new Parameters.ParameterEntry("runningSpeed", 0, false)); // the actual speed
             parameters.Add("MAX_RUN_SPEED", new Parameters.ParameterEntry("MAX_RUN_SPEED", "Vitesse maximale", 0, Parameters.ParameterEntry.Type.Slider)); // the maximum speed
-            parameters.Add("isMale", new Parameters.ParameterEntry("isMale", false, false)); // gender (true = male, false = female)
+            parameters.Add("isMale", new Parameters.ParameterEntry("isMale", true, false)); // gender (true = male, false = female)
+            parameters.Add("isPregnant", new Parameters.ParameterEntry("isPregnant", true, false));
             parameters.Add("pregnancyTime", new Parameters.ParameterEntry("pregnancyTime", "Temps de gestation", 0, Parameters.ParameterEntry.Type.Slider)); // duration of pregnancy
             parameters.Add("nbOfBabyPerLitter", new Parameters.ParameterEntry("nbOfBabyPerLitter", "Nombre d'enfant par gestation", 0, Parameters.ParameterEntry.Type.Slider)); // how many babies are born in one go
             parameters.Add("interactionLevel", new Parameters.ParameterEntry("interactionLevel", "Niveau d'interaction", 0, Parameters.ParameterEntry.Type.Slider)); // measures how the animal interact with other animals (negative = afraid, 0 = neutral, positive = aggressive)
@@ -35,9 +32,14 @@ namespace Animals
             {
                 for (int j = -20; j <= 20; j += 5)
                 {
-                    vectors.Add((Quaternion.AngleAxis(i, Vector3.right) * Quaternion.AngleAxis(j, Vector3.up) * -Vector3.forward).normalized * 5);
+                    vision.Add((Quaternion.AngleAxis(i, Vector3.right) * Quaternion.AngleAxis(j, Vector3.up) * -Vector3.forward).normalized * 5);
                 }
             }
+        }
+
+        public bool isHungry()
+        {
+            return parameters["hunger"].value < parameters["MAX_HUNGER"].value / 3; // the animal is hungry if its current hunger level is under the third of the max
         }
 
         public bool isThirsty()
@@ -45,84 +47,56 @@ namespace Animals
             return parameters["thirst"].value < parameters["MAX_THIRST"].value / 3; // the animal is thirsty if its current thirst level is under the third of the max
         }
 
-        public bool isHungry()
+        public bool wantBaby()
         {
-            return true;
-            //return parameters["hunger"].value < parameters["MAX_HUNGER"].value / 3; // the animal is hungry if its current hunger level is under the third of the max
+            return parameters["age"].value >= parameters["ADULT_AGE"] && !isHungry() && !isThirsty();
         }
 
-        public void lookForRessource()
+        public Transform look()
         {
-            if (isHungry())
+            Vector3 front = gameObject.transform.TransformDirection(Vector3.forward * 2 * gameObject.transform.localScale.y);
+            RaycastHit hit;
+
+            foreach (Vector3 v in vision)
             {
-                lookForFood();
+                Debug.DrawRay(gameObject.transform.position, v, Color.green, 5, false);
+                if (Physics.Raycast(gameObject.transform.position, v, out hit))
+                {
+                    if (this.targets.Contains(hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>().species) && isHungry()) // is target in diet ?
+                    {
+                        return hit.transform;
+                    }
+                    if (hit.transform.gameObject.tag.Equals("Water") && isThirsty())
+                    {
+                        return hit.transform;
+                    }
+                    if (hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>().species.Equals(this.GetSpecies()) && wantBaby()) // is target same species ?
+                    {
+                        if (parameters["isMale"].value && !hit.transform.gameObject.GetComponentInChildren<Entity>().parameters["isMale"].value) // male and female
+                        {
+                            return hit.transform;
+                        }
+                        if (!parameters["isMale"].value && hit.transform.gameObject.GetComponentInChildren<Entity>().parameters["isMale"].value) // female and male
+                        {
+                            return hit.transform;
+                        }
+                    }
+                }
             }
-            else if (isThirsty())
-            {
-                //todo
-                //lookForWater();
-            }
-            else
-            {
-               // lookAround();
-            }
+            return null;
         }
 
-        // moves in a random direction
-        public void lookAround()
+        public void moveAround()
         {
             float speed = parameters.ContainsKey("MAX_RUN_SPEED") ? parameters["MAX_RUN_SPEED"].value : 0;
-
             float minDistance = 1f;
             float maxDistance = 2f;
             gameObject.transform.Rotate(Vector3.up, UnityEngine.Random.Range(0, 360));
             gameObject.GetComponent<Rigidbody>().MovePosition(gameObject.GetComponent<Rigidbody>().position + gameObject.transform.forward * UnityEngine.Random.Range(minDistance, maxDistance) * speed);
         }
 
-        private void lookForFood()
+        private void moveToTarget(Transform target)
         {
-            Vector3 front = gameObject.transform.TransformDirection(Vector3.forward * 2 * gameObject.transform.localScale.y);
-            RaycastHit hit;
-
-
-            foreach (Vector3 v in vectors)
-            {
-                Debug.DrawRay(gameObject.transform.position, v, Color.green, 5, false);
-                /*if (Physics.Raycast(gameObject.transform.position, v, out hit))
-                {
-                    if (this.targets.Contains(hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>().species))
-                    {
-                        target = hit.transform;
-                    }
-                }
-                else
-                {
-                    //lookAround();
-                }*/
-            } 
-        }
-
-        /*
-        private void lookForWater()
-        {
-            if ()
-            {
-
-            }
-            else
-            {
-                lookAround();
-            }
-        }
-        */
-
-        private void moveToTarget()
-        {
-            //if (this is Wolf)
-            //Debug.Log("vec : " + (gameObject.transform.position - target.position).normalized + ", SPEED : " + parameters["MAX_RUN_SPEED"].value + ", DT : " + Time.deltaTime + " result : " +
-            //    ((gameObject.transform.position - target.position).normalized * parameters["MAX_RUN_SPEED"].value * Time.deltaTime));
-            //Debug.Log("vec : " + (Vector3.forward * parameters["MAX_RUN_SPEED"].value));
-            //gameObject.transform.position += gameObject.transform.TransformDirection((gameObject.transform.position - target.position).normalized * parameters["MAX_RUN_SPEED"].value * Time.deltaTime * gameObject.transform.localScale.z);
             gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
             gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             gameObject.transform.LookAt(target);
@@ -131,11 +105,14 @@ namespace Animals
 
         public void eat(GameObject go)
         {
-            parameters["hunger"].value = parameters["MAX_HUNGER"].value; // hunger is refilled
-            Destroy(go);
+            if (go.GetComponent<Entity>().parameters["isEdible"].value)
+            {
+                gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                Destroy(go); // eat target
+                parameters["hunger"].value = parameters["MAX_HUNGER"].value; // hunger is refilled
+            }
 
-            gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         }
 
         public void drink()
@@ -143,37 +120,53 @@ namespace Animals
             parameters["thirst"].value = parameters["MAX_THIRST"].value; // thirst is refilled
         }
 
-        public float lastAction = -1;
+        public void baby()
+        {
+            
+        }
 
         override public void FixedUpdate()
         {
             base.FixedUpdate();
 
-            //Debug.Log("time : " + Time.realtimeSinceStartup);
+            parameters["thirst"].value--;
+            parameters["hunger"].value--;
+
+            if (parameters["thirst"].value == 0 || parameters["hunger"].value == 0)
+            {
+                Destroy(gameObject); // die of thirst or hunger
+            }
+
             if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)
             {
+                Transform target = look();
+
                 if (target == null)
                 {
-                    lookForRessource();
+                    moveAround();
                 }
                 else
                 {
-                    moveToTarget();
+                    moveToTarget(target);
                 }
 
-                lastAction = Time.realtimeSinceStartup;
-
-                //parameters["thirst"].value--;
-                parameters["hunger"].value--;
-
-                //Debug.Log("thirst : " + parameters["thirst"].value);
-                //if (this is Wolf)
-                //    Debug.Log("hunger : " + parameters["hunger"].value + ", is Hungry ? " + (isHungry() ? "yes" : "no") + ", found target ? " + (target == null ? "no" : "yes"));
-
-                //if (parameters["thirst"].value == 0 || parameters["hunger"].value == 0)
-                //if (parameters["hunger"].value == 0)
-                //    Destroy(gameObject);
+                lastAction = Time.realtimeSinceStartup;  
             }
+
+            if (parameters["isPregnant"].value)
+            {
+                baby();
+            }
+        }
+
+        public List<Species> getTargets()
+        {
+            return targets;
+        }
+
+        public List<Vector3> getVision()
+        {
+            return vision;
         }
     }
 }

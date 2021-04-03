@@ -9,7 +9,7 @@ namespace Agents
     class NEAT : MonoBehaviour
     {
         private NeuralNetwork nn;
-        private Entity animal;
+        public Entity animal;
         public Species species;
 
         private void Start()
@@ -49,7 +49,7 @@ namespace Agents
                 return;
             Species species = other.gameObject.GetComponentInChildren<NEAT>().species;
 
-            if (animal is Animal && (animal as Animal).targets.Contains(species))
+            if (animal is Animal && (animal as Animal).getTargets().Contains(species))
                 (animal as Animal).target = other.transform;
         }
 
@@ -62,7 +62,7 @@ namespace Agents
 
             Species species = collision.gameObject.GetComponentInChildren<NEAT>().species;
 
-            if (animal is Animal && (animal as Animal).targets.Contains(species))
+            if (animal is Animal && (animal as Animal).getTargets().Contains(species))
                 (animal as Animal).eat(collision.gameObject);
         }
 

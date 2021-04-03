@@ -8,5 +8,6 @@ namespace Animals
     [Serializable]
     public class Rabbit : Herbivorous
     {
+
     }
 }
