@@ -33,7 +33,7 @@ public class MapDisplay : MonoBehaviour
         meshFilter.sharedMesh = meshData.CreateMesh();
         if (meshFilter.gameObject.GetComponent<MeshCollider>() != null)
         {
-            Destroy(meshFilter.gameObject.GetComponent<MeshCollider>());
+            DestroyImmediate(meshFilter.gameObject.GetComponent<MeshCollider>());
         }
         Physics.BakeMesh(meshFilter.sharedMesh.GetInstanceID(), false);
         MeshCollider meshCollider = meshFilter.gameObject.AddComponent<MeshCollider>();

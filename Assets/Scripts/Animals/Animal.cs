@@ -35,7 +35,7 @@ namespace Animals
             {
                 for (int j = -20; j <= 20; j += 5)
                 {
-                    vectors.Add((Quaternion.AngleAxis(i, Vector3.right) * Quaternion.AngleAxis(j, Vector3.up) * -Vector3.forward).normalized * 5);
+                    vectors.Add((Quaternion.AngleAxis(i, Vector3.right) * Quaternion.AngleAxis(j, Vector3.up) * -Vector3.forward).normalized * gameObject.transform.localScale.z * 15);
                 }
             }
         }
@@ -81,24 +81,23 @@ namespace Animals
 
         private void lookForFood()
         {
-            Vector3 front = gameObject.transform.TransformDirection(Vector3.forward * 2 * gameObject.transform.localScale.y);
             RaycastHit hit;
-
 
             foreach (Vector3 v in vectors)
             {
-                Debug.DrawRay(gameObject.transform.position, v, Color.green, 5, false);
-                /*if (Physics.Raycast(gameObject.transform.position, v, out hit))
+                Debug.DrawRay(gameObject.transform.position, v, Color.green, 5);
+                if (Physics.Raycast(gameObject.transform.position, v, out hit))
                 {
-                    if (this.targets.Contains(hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>().species))
+                    var hitObj = hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>(); 
+                    if (hitObj != null && this.targets.Contains(hitObj.species))
                     {
                         target = hit.transform;
                     }
                 }
                 else
                 {
-                    //lookAround();
-                }*/
+                    lookAround();
+                }
             } 
         }
 

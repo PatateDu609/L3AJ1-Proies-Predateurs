@@ -40,6 +40,42 @@ namespace Environment
             rabbit.parameters["nbOfBabyPerLitter"].value = 3;
             rabbit.parameters["interactionLevel"].value = -8;
 
+            Deer deer = ScriptableObject.CreateInstance<Deer>();
+
+            deer.parameters["id"].value = "deer";
+            deer.parameters["ADULT_AGE"].value = 3;
+            deer.parameters["MAX_AGE"].value = 20;
+            deer.parameters["MAX_HUNGER"].value = 25;
+            deer.parameters["MAX_THIRST"].value = 15;
+            deer.parameters["MAX_RUN_SPEED"].value = 0; // 45 is the true value
+            deer.parameters["pregnancyTime"].value = 4;
+            deer.parameters["nbOfBabyPerLitter"].value = 3;
+            deer.parameters["interactionLevel"].value = -8;
+
+            Bear bear = ScriptableObject.CreateInstance<Bear>();
+
+            bear.parameters["id"].value = "bear";
+            bear.parameters["ADULT_AGE"].value = 16;
+            bear.parameters["MAX_AGE"].value = 80;
+            bear.parameters["MAX_HUNGER"].value = 25;
+            bear.parameters["MAX_THIRST"].value = 15;
+            bear.parameters["MAX_RUN_SPEED"].value = 0; // 45 is the true value
+            bear.parameters["pregnancyTime"].value = 4;
+            bear.parameters["nbOfBabyPerLitter"].value = 3;
+            bear.parameters["interactionLevel"].value = -8;
+
+            Cat cat = ScriptableObject.CreateInstance<Cat>();
+
+            cat.parameters["id"].value = "cat";
+            cat.parameters["ADULT_AGE"].value = 4;
+            cat.parameters["MAX_AGE"].value = 25;
+            cat.parameters["MAX_HUNGER"].value = 25;
+            cat.parameters["MAX_THIRST"].value = 15;
+            cat.parameters["MAX_RUN_SPEED"].value = 0; // 45 is the true value
+            cat.parameters["pregnancyTime"].value = 4;
+            cat.parameters["nbOfBabyPerLitter"].value = 3;
+            cat.parameters["interactionLevel"].value = -8;
+
             Parameters p = new Parameters();
 
             p.parameters.Add("aridity", new ParameterEntry("aridity", "Aridité", 20, ParameterEntry.Type.Slider));
@@ -50,6 +86,9 @@ namespace Environment
             p.parameters.Add("entities", new ParameterEntry("entities", new List<Entity>{
                     rabbit,
                     wolf,
+                    deer,
+                    bear,
+                    cat,
                     carrot
             }
             ));

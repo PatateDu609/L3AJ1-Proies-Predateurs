@@ -2,4 +2,4 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Species {Wolf, Rabbit, Carrot};
+public enum Species {Wolf, Rabbit, Carrot, Bear, Deer, Dog};

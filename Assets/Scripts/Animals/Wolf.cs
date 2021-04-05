@@ -11,6 +11,7 @@ namespace Animals
         public Wolf() : base()
         {
             targets.Add(Species.Rabbit);
+            targets.Add(Species.Deer);
         }
     }
 }
