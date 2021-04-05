@@ -13,24 +13,28 @@ namespace Animals
         public Transform transform;
         public Transform target;
         public List<Vector3> vectors = new List<Vector3>();
-
+        private Animator animator;
 
         public Animal() : base()
         {
-            parameters.Add("hunger", new Parameters.ParameterEntry("hunger", 0, false)); // actual hunger (if low will seek a target, if 0 dies)
+            parameters.Add("hunger", new Parameters.ParameterEntry("hunger", 0.0, false)); // actual hunger (if low will seek a target, if 0 dies)
             parameters.Add("MAX_HUNGER", new Parameters.ParameterEntry("MAX_HUNGER", "Niveau de satiété", 0, Parameters.ParameterEntry.Type.Slider)); // hunger cap (if reached will not try to eat more)
-            parameters.Add("thirst", new Parameters.ParameterEntry("thirst", 0, false)); // actuel thirst (if low will seek water, if 0 dies)
+            parameters.Add("thirst", new Parameters.ParameterEntry("thirst", 0.0, false)); // actuel thirst (if low will seek water, if 0 dies)
             parameters.Add("MAX_THIRST", new Parameters.ParameterEntry("MAX_THIRST", "Niveau de satiété hydrique", 0, Parameters.ParameterEntry.Type.Slider)); // thirst cap (if reached will not try to drink more)
-            parameters.Add("runningSpeed", new Parameters.ParameterEntry("runningSpeed", 0, false)); // the actual speed
+            parameters.Add("runningSpeed", new Parameters.ParameterEntry("runningSpeed", 0.0, false)); // the actual speed
             parameters.Add("MAX_RUN_SPEED", new Parameters.ParameterEntry("MAX_RUN_SPEED", "Vitesse maximale", 0, Parameters.ParameterEntry.Type.Slider)); // the maximum speed
             parameters.Add("isMale", new Parameters.ParameterEntry("isMale", false, false)); // gender (true = male, false = female)
             parameters.Add("pregnancyTime", new Parameters.ParameterEntry("pregnancyTime", "Temps de gestation", 0, Parameters.ParameterEntry.Type.Slider)); // duration of pregnancy
             parameters.Add("nbOfBabyPerLitter", new Parameters.ParameterEntry("nbOfBabyPerLitter", "Nombre d'enfant par gestation", 0, Parameters.ParameterEntry.Type.Slider)); // how many babies are born in one go
             parameters.Add("interactionLevel", new Parameters.ParameterEntry("interactionLevel", "Niveau d'interaction", 0, Parameters.ParameterEntry.Type.Slider)); // measures how the animal interact with other animals (negative = afraid, 0 = neutral, positive = aggressive)
+            parameters.Add("HPMax", new Parameters.ParameterEntry("HPMax", "Niveau de vie maximal", 0, Parameters.ParameterEntry.Type.Slider)); // Hit points of the animal
+            parameters.Add("HP", new Parameters.ParameterEntry("HP", 0.0, false)); // Current hit points of the animal
+            parameters.Add("Atk", new Parameters.ParameterEntry("Atk", "Niveau d'attaque maximal", 0, Parameters.ParameterEntry.Type.Slider)); // Atk points of the animal
         }
 
         public void Start()
         {
+            animator = gameObject.GetComponent<Animator>();
             for (int i = -30; i <= 30; i += 10)
             {
                 for (int j = -20; j <= 20; j += 5)
@@ -64,7 +68,7 @@ namespace Animals
             }
             else
             {
-               // lookAround();
+                // lookAround();
             }
         }
 
@@ -88,7 +92,7 @@ namespace Animals
                 Debug.DrawRay(gameObject.transform.position, v, Color.green, 5);
                 if (Physics.Raycast(gameObject.transform.position, v, out hit))
                 {
-                    var hitObj = hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>(); 
+                    var hitObj = hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>();
                     if (hitObj != null && this.targets.Contains(hitObj.species))
                     {
                         target = hit.transform;
@@ -98,7 +102,7 @@ namespace Animals
                 {
                     lookAround();
                 }
-            } 
+            }
         }
 
         /*
@@ -142,37 +146,68 @@ namespace Animals
             parameters["thirst"].value = parameters["MAX_THIRST"].value; // thirst is refilled
         }
 
+        private void death()
+        {
+            if (!parameters["isAlive"].value)
+                return;
+            if (parameters["HP"].value <= 0 || parameters["age"].value >= parameters["MAX_AGE"].value
+                || parameters["hunger"].value <= 0 || parameters["thirst"].value <= 0)
+            {
+                animator.SetBool("died", true);
+                parameters["isAlive"].value = false;
+                parameters.Add("timeSinceDeath", new Parameters.ParameterEntry("timeSinceDeath", 0, false));
+            }
+        }
+
+        private void time()
+        {
+            //parameters["thrist"].value -= Time.fixedDeltaTime;
+            parameters["hunger"].value -= Time.fixedDeltaTime;
+            if (parameters["isAlive"].value)
+                parameters["age"].value += Time.fixedDeltaTime;
+            else
+                parameters["timeSinceDeath"].value += Time.fixedDeltaTime;
+
+            death();
+        }
+
         public float lastAction = -1;
 
         override public void FixedUpdate()
         {
             base.FixedUpdate();
 
-            //Debug.Log("time : " + Time.realtimeSinceStartup);
-            if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)
+            time();
+
+            ////Debug.Log("time : " + Time.realtimeSinceStartup);
+            //if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)
+            //{
+            //    if (target == null)
+            //    {
+            //        lookForRessource();
+            //    }
+            //    else
+            //    {
+            //        moveToTarget();
+            //    }
+
+            //    lastAction = Time.realtimeSinceStartup;
+
+            //    //parameters["thirst"].value--;
+            //    parameters["hunger"].value--;
+
+            //    //Debug.Log("thirst : " + parameters["thirst"].value);
+            //    //if (this is Wolf)
+            //    //    Debug.Log("hunger : " + parameters["hunger"].value + ", is Hungry ? " + (isHungry() ? "yes" : "no") + ", found target ? " + (target == null ? "no" : "yes"));
+
+            //    //if (parameters["thirst"].value == 0 || parameters["hunger"].value == 0)
+            //    //if (parameters["hunger"].value == 0)
+            if (!parameters["isAlive"].value)
             {
-                if (target == null)
-                {
-                    lookForRessource();
-                }
-                else
-                {
-                    moveToTarget();
-                }
-
-                lastAction = Time.realtimeSinceStartup;
-
-                //parameters["thirst"].value--;
-                parameters["hunger"].value--;
-
-                //Debug.Log("thirst : " + parameters["thirst"].value);
-                //if (this is Wolf)
-                //    Debug.Log("hunger : " + parameters["hunger"].value + ", is Hungry ? " + (isHungry() ? "yes" : "no") + ", found target ? " + (target == null ? "no" : "yes"));
-
-                //if (parameters["thirst"].value == 0 || parameters["hunger"].value == 0)
-                //if (parameters["hunger"].value == 0)
-                //    Destroy(gameObject);
+                if (parameters["timeSinceDeath"].value >= 30)
+                    Destroy(gameObject);
             }
+            //}
         }
     }
 }

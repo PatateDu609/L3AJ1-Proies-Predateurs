@@ -15,7 +15,7 @@ namespace Environment
             Carrot carrot = ScriptableObject.CreateInstance<Carrot>();
             carrot.parameters["id"].value = "carrot";
             carrot.parameters["ADULT_AGE"].value = 1;
-            carrot.parameters["MAX_AGE"].value = 2;
+            carrot.parameters["MAX_AGE"].value = 10;
 
             Wolf wolf = ScriptableObject.CreateInstance<Wolf>();
             wolf.parameters["id"].value = "wolf";
@@ -27,18 +27,22 @@ namespace Environment
             wolf.parameters["pregnancyTime"].value = 4;
             wolf.parameters["nbOfBabyPerLitter"].value = 3;
             wolf.parameters["interactionLevel"].value = 5;
+            wolf.parameters["HPMax"].value = 50;
+            wolf.parameters["Atk"].value = 55;
 
             Rabbit rabbit = ScriptableObject.CreateInstance<Rabbit>();
 
             rabbit.parameters["id"].value = "rabbit";
-            rabbit.parameters["ADULT_AGE"].value = 2;
-            rabbit.parameters["MAX_AGE"].value = 18;
+            rabbit.parameters["ADULT_AGE"].value = 4;
+            rabbit.parameters["MAX_AGE"].value = 22;
             rabbit.parameters["MAX_HUNGER"].value = 25;
             rabbit.parameters["MAX_THIRST"].value = 15;
             rabbit.parameters["MAX_RUN_SPEED"].value = 0; // 45 is the true value
             rabbit.parameters["pregnancyTime"].value = 4;
             rabbit.parameters["nbOfBabyPerLitter"].value = 3;
             rabbit.parameters["interactionLevel"].value = -8;
+            rabbit.parameters["HPMax"].value = 10;
+            rabbit.parameters["Atk"].value = 1;
 
             Deer deer = ScriptableObject.CreateInstance<Deer>();
 
@@ -51,6 +55,8 @@ namespace Environment
             deer.parameters["pregnancyTime"].value = 4;
             deer.parameters["nbOfBabyPerLitter"].value = 3;
             deer.parameters["interactionLevel"].value = -8;
+            deer.parameters["HPMax"].value = 60;
+            deer.parameters["Atk"].value = 40;
 
             Bear bear = ScriptableObject.CreateInstance<Bear>();
 
@@ -63,6 +69,8 @@ namespace Environment
             bear.parameters["pregnancyTime"].value = 4;
             bear.parameters["nbOfBabyPerLitter"].value = 3;
             bear.parameters["interactionLevel"].value = -8;
+            bear.parameters["HPMax"].value = 100;
+            bear.parameters["Atk"].value = 70;
 
             Cat cat = ScriptableObject.CreateInstance<Cat>();
 
@@ -75,6 +83,8 @@ namespace Environment
             cat.parameters["pregnancyTime"].value = 4;
             cat.parameters["nbOfBabyPerLitter"].value = 3;
             cat.parameters["interactionLevel"].value = -8;
+            cat.parameters["HPMax"].value = 20;
+            cat.parameters["Atk"].value = 15;
 
             Parameters p = new Parameters();
 
@@ -83,6 +93,7 @@ namespace Environment
             p.parameters.Add("amplitude", new ParameterEntry("amplitude", "Amplitude", 15, ParameterEntry.Type.Slider));
             p.parameters.Add("resourcesQuantity", new ParameterEntry("resourcesQuantity", "Quantité de ressources", 70, ParameterEntry.Type.Slider));
             p.parameters.Add("seed", new ParameterEntry("seed", "Seed", 0, ParameterEntry.Type.Input));
+            p.parameters.Add("timeMax", new ParameterEntry("timeMax", 375, false));
             p.parameters.Add("entities", new ParameterEntry("entities", new List<Entity>{
                     rabbit,
                     wolf,

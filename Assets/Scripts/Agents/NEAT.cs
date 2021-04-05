@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Animals;
+using System;
+using System.Linq;
 
 // Tuto of Underpower Jet : https://www.youtube.com/watch?v=Yq0SfuiOVYE
 
@@ -12,6 +14,12 @@ namespace Agents
         private Entity animal;
         public Species species;
 
+        public float hunger;
+        public float thirst;
+        public float age;
+        public float hp;
+        public float timeSinceDeath;
+
         private void Start()
         {
             Environment.Parameters parameters = Menu.EditAction.parameters ?? Environment.Parameters.Load();
@@ -19,7 +27,9 @@ namespace Agents
 
             foreach (Entity e in entities)
             {
-                if ((e is Rabbit && species == Species.Rabbit) || (e is Wolf && species == Species.Wolf) || (e is Carrot && species == Species.Carrot))
+                if ((e is Rabbit && species == Species.Rabbit) || (e is Wolf && species == Species.Wolf)
+                    || (e is Carrot && species == Species.Carrot) || (e is Deer && species == Species.Deer)
+                    || (e is Bear && species == Species.Bear) || (e is Cat && species == Species.Cat))
                 {
                     animal = Instantiate(e);
                     animal.parameters = e.parameters;
@@ -27,19 +37,30 @@ namespace Agents
             }
 
             animal.gameObject = gameObject;
+            animal.parameters["MAX_AGE"].value *= parameters.parameters["timeMax"].value / 100.0;
+            Debug.Log("id : " + animal.parameters["id"].value + ", MAX_AGE : " + animal.parameters["MAX_AGE"].value);
             if (animal is Animal)
             {
                 animal.parameters["thirst"].value = animal.parameters["MAX_THIRST"].value;
                 animal.parameters["hunger"].value = animal.parameters["MAX_HUNGER"].value;
+                animal.parameters["HP"].value = animal.parameters["HPMax"].value;
                 (animal as Animal).Start();
             }
 
-            nn = new NeuralNetwork(new int[] { 64, });
+            //nn = new NeuralNetwork(new int[] { });
         }
 
         private void FixedUpdate()
         {
             animal.FixedUpdate();
+            if (animal is Animal)
+            {
+                hunger = animal.parameters["hunger"].value;
+                thirst = animal.parameters["thirst"].value;
+                age = animal.parameters["age"].value;
+                hp = animal.parameters["HP"].value;
+                timeSinceDeath = animal.parameters.ContainsKey("timeSinceDeath") ? animal.parameters["timeSinceDeath"].value : 0;
+            }
         }
 
         private void OnTriggerEnter(Collider other)
