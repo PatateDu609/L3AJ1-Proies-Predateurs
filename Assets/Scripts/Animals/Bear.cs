@@ -12,7 +12,7 @@ namespace Animals
         {
             targets.Add(Species.Wolf);
             targets.Add(Species.Deer);
-            targets.Add(Species.Dog);
+            targets.Add(Species.Cat);
             targets.Add(Species.Rabbit);
         }
     }

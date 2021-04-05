@@ -1856,6 +1856,7 @@ GameObject:
   - component: {fileID: 7999184969431131047}
   - component: {fileID: 8892555021187500939}
   - component: {fileID: 2795158461762675901}
+  - component: {fileID: 3997052240207716782}
   m_Layer: 0
   m_Name: Cat
   m_TagString: Untagged
@@ -1927,6 +1928,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.2046458, y: 0.33674765, z: 0.70633954}
   m_Center: {x: -0.018908184, y: 0.16784868, z: -0.044438165}
+--- !u!114 &3997052240207716782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7999184969421771217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 602c32f0e92c5d5479204fae47db38f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  species: 5
 --- !u!1 &7999184969421771219
 GameObject:
   m_ObjectHideFlags: 0
