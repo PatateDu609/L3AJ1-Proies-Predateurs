@@ -97,6 +97,7 @@ public class MeshData
         mesh.triangles = triangles;
         mesh.uv = uv;
         mesh.RecalculateNormals(); // Permet d'éviter d'éventuels problèmes relatifs à la simulation de lumière
+        Physics.BakeMesh(mesh.GetInstanceID(), false);
         return mesh;
     }
 }

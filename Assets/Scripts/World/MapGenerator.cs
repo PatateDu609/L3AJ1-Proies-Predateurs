@@ -28,7 +28,11 @@ public class MapGenerator : MonoBehaviour
     public bool autoUpdate;
 
     public TerrainType[] regions;
-
+    private static MapData mapData;
+    public static float[,] HeightMap { get
+        {
+            return mapData.heightMap;
+        } }
 
 
     /// <summary>
@@ -45,8 +49,7 @@ public class MapGenerator : MonoBehaviour
     /// </summary>
     public void DrawMapInEditor()
     {
-        MapData mapData = GenerateMapData();
-
+        mapData = GenerateMapData();
         MapDisplay display = FindObjectOfType<MapDisplay>();
         if (drawMode == DrawMode.NoiseMap)
         {

@@ -9,6 +9,7 @@ using UnityEngine;
 
 public class MapDisplay : MonoBehaviour
 {
+    public PhysicMaterial physicMaterial;
     public Renderer textureRenderer;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
@@ -30,6 +31,13 @@ public class MapDisplay : MonoBehaviour
     public void DrawMesh(MeshData meshData, Texture2D texture)
     {
         meshFilter.sharedMesh = meshData.CreateMesh();
+        if (meshFilter.gameObject.GetComponent<MeshCollider>() != null)
+        {
+            Destroy(meshFilter.gameObject.GetComponent<MeshCollider>());
+        }
+        Physics.BakeMesh(meshFilter.sharedMesh.GetInstanceID(), false);
+        MeshCollider meshCollider = meshFilter.gameObject.AddComponent<MeshCollider>();
+        meshCollider.sharedMaterial = physicMaterial;
         meshRenderer.sharedMaterial.mainTexture = texture;
     }
 }
