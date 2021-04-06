@@ -8,5 +8,9 @@ namespace Animals
     [Serializable]
     public class Rabbit : Herbivorous
     {
+        public Rabbit() : base()
+        {
+            targets.Add(Species.Carrot);
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Environment;
+using Agents;
 
 namespace Animals
 {
@@ -51,8 +52,8 @@ namespace Animals
 
         public bool isHungry()
         {
-            return true;
-            //return parameters["hunger"].value < parameters["MAX_HUNGER"].value / 3; // the animal is hungry if its current hunger level is under the third of the max
+            //return true;
+            return parameters["hunger"].value < parameters["MAX_HUNGER"].value / 3; // the animal is hungry if its current hunger level is under the third of the max
         }
 
         public void lookForRessource()
@@ -76,31 +77,53 @@ namespace Animals
         public void lookAround()
         {
             float speed = parameters.ContainsKey("MAX_RUN_SPEED") ? parameters["MAX_RUN_SPEED"].value : 0;
+            RaycastHit hit;
 
-            float minDistance = 1f;
-            float maxDistance = 2f;
+
             gameObject.transform.Rotate(Vector3.up, UnityEngine.Random.Range(0, 360));
-            gameObject.GetComponent<Rigidbody>().MovePosition(gameObject.GetComponent<Rigidbody>().position + gameObject.transform.forward * UnityEngine.Random.Range(minDistance, maxDistance) * speed);
+            //gameObject.GetComponent<Rigidbody>().MovePosition(gameObject.GetComponent<Rigidbody>().position + gameObject.transform.forward * UnityEngine.Random.Range(minDistance, maxDistance) * speed);
+            gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+            //gameObject.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * parameters["MAX_RUN_SPEED"].value, ForceMode.Force);
+            gameObject.transform.Translate(Vector3.forward * parameters["MAX_RUN_SPEED"].value);
+
+            foreach (Vector3 v in vectors)
+            {
+                Debug.DrawRay(gameObject.transform.position, gameObject.transform.TransformDirection(-v), Color.green, 5);
+                if (Physics.Raycast(gameObject.transform.position, gameObject.transform.TransformDirection(-v), out hit))
+                {
+                    if (hit.transform.gameObject.name == "Water")
+                    {
+                        gameObject.transform.Rotate(Vector3.up, 180);
+                    }
+                }
+            }
         }
 
         private void lookForFood()
         {
             RaycastHit hit;
-
+            bool foundFood = false;
             foreach (Vector3 v in vectors)
             {
-                Debug.DrawRay(gameObject.transform.position, v, Color.green, 5);
-                if (Physics.Raycast(gameObject.transform.position, v, out hit))
+                Debug.DrawRay(gameObject.transform.position, gameObject.transform.TransformDirection(-v), Color.green, 5);
+                if (Physics.Raycast(gameObject.transform.position, gameObject.transform.TransformDirection(-v), out hit))
                 {
                     var hitObj = hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>();
                     if (hitObj != null && this.targets.Contains(hitObj.species))
                     {
+                        foundFood = true;
                         target = hit.transform;
+                        break;
                     }
                 }
-                else
+            }
+            if (foundFood == false)
+            {
+                if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)
                 {
                     lookAround();
+                    lastAction = Time.realtimeSinceStartup;
                 }
             }
         }
@@ -130,6 +153,32 @@ namespace Animals
             gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             gameObject.transform.LookAt(target);
             gameObject.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * parameters["MAX_RUN_SPEED"].value * 100, ForceMode.Force);
+            Entity entity = target.gameObject.GetComponent<NEAT>().Animal;
+            if (entity is Carrot)
+            {
+                entity.parameters["isAlive"].value = false;
+                return;
+            }
+            if (Vector3.Distance(gameObject.transform.position, target.position) <= 10)
+            {
+                int HP;
+                int ATK;
+                if (entity.parameters.ContainsKey("HP"))
+                {
+                    HP = entity.parameters["HP"].value;
+
+                }
+                else HP = 1;
+
+                if (parameters.ContainsKey("ATK"))
+                {
+                    ATK = parameters["ATK"].value;
+
+                }
+                else ATK = 1;
+
+                HP -= ATK;
+            }
         }
 
         public void eat(GameObject go)
@@ -176,8 +225,32 @@ namespace Animals
         override public void FixedUpdate()
         {
             base.FixedUpdate();
-
             time();
+
+             if (isHungry())
+            {
+                if(target == null)
+                {
+                    lookForFood();
+                } else
+                {
+                    moveToTarget();
+                    if (!target.gameObject.GetComponent<NEAT>().Animal.parameters["isAlive"].value)
+                    {
+                        eat(target.gameObject);
+                        Debug.Log("eaten");
+                    }
+                }
+
+            }      
+            else
+            {
+                if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)
+                {
+                    lookAround();
+                    lastAction = Time.realtimeSinceStartup;
+                }
+            }
 
             ////Debug.Log("time : " + Time.realtimeSinceStartup);
             //if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)

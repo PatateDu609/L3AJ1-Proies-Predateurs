@@ -28,21 +28,46 @@ public class MapGenerator : MonoBehaviour
     public bool autoUpdate;
 
     public TerrainType[] regions;
-    private static MapData mapData;
-    public static float[,] HeightMap { get
+    private MapData mapData;
+    public float[,] HeightMap { get
         {
             return mapData.heightMap;
         } }
 
+    public float[] GetSpawnable
+    {
+        get
+        {
+            float[] spawnable = new float[2];
+            spawnable[0] = -1;
+            spawnable[1] = -1;
+
+            foreach (TerrainType terrain in regions)
+            {
+                if (spawnable[0] == -1 && terrain.name.ToLower().Contains("grass"))
+                    spawnable[0] = terrain.terrainHeight;
+                else if (spawnable[0] != -1 && !terrain.name.ToLower().Contains("grass"))
+                {
+                    spawnable[1] = terrain.terrainHeight;
+                    break ;
+                }
+            }
+            if (spawnable[0] == -1 && spawnable[1] == -1)
+                return new float[]{ 0, 1 };
+            return spawnable;
+        }
+    }
+
+    public static MapGenerator instance;
 
     /// <summary>
     /// Permet de charger le monde et ses textures lors du lancement
     /// </summary>
-    private void Start()
+    private void Awake()
     {
+        instance = this;
         DrawMapInEditor();
     }
-
 
     /// <summary>
     /// Permet de visualiser le monde créer sur l'éditeur d'Unity

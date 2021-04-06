@@ -13,9 +13,15 @@ namespace Agents
         private NeuralNetwork nn;
         private Entity animal;
         public Species species;
-
-        public float hunger;
-        public float thirst;
+        public Entity Animal
+        {
+            get
+            {
+                return animal;
+            }
+        }
+        public double hunger;
+        public double thirst;
         public float age;
         public float hp;
         public float timeSinceDeath;
@@ -38,7 +44,6 @@ namespace Agents
 
             animal.gameObject = gameObject;
             animal.parameters["MAX_AGE"].value *= parameters.parameters["timeMax"].value / 100.0;
-            Debug.Log("id : " + animal.parameters["id"].value + ", MAX_AGE : " + animal.parameters["MAX_AGE"].value);
             if (animal is Animal)
             {
                 animal.parameters["thirst"].value = animal.parameters["MAX_THIRST"].value;
@@ -52,6 +57,7 @@ namespace Agents
 
         private void FixedUpdate()
         {
+            
             animal.FixedUpdate();
             if (animal is Animal)
             {
@@ -63,7 +69,7 @@ namespace Agents
             }
         }
 
-        private void OnTriggerEnter(Collider other)
+        /*private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.GetComponentInChildren<NEAT>() == null)
                 return;
@@ -84,7 +90,7 @@ namespace Agents
 
             if (animal is Animal && (animal as Animal).targets.Contains(species))
                 (animal as Animal).eat(collision.gameObject);
-        }
+        }*/
 
         private class NeuralNetwork
         {
