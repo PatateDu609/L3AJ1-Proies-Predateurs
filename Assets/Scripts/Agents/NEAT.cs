@@ -69,29 +69,6 @@ namespace Agents
             }
         }
 
-        /*private void OnTriggerEnter(Collider other)
-        {
-            if (other.gameObject.GetComponentInChildren<NEAT>() == null)
-                return;
-            Species species = other.gameObject.GetComponentInChildren<NEAT>().species;
-
-            if (animal is Animal && (animal as Animal).targets.Contains(species))
-                (animal as Animal).target = other.transform;
-        }
-
-        private void OnCollisionEnter(Collision collision)
-        {
-            if (collision.gameObject.GetComponentInChildren<NEAT>() == null)
-                return;
-
-            Debug.Log("COLLIDES WITH : " + collision);
-
-            Species species = collision.gameObject.GetComponentInChildren<NEAT>().species;
-
-            if (animal is Animal && (animal as Animal).targets.Contains(species))
-                (animal as Animal).eat(collision.gameObject);
-        }*/
-
         private class NeuralNetwork
         {
             // TODO : Edit attributes to create a fully editable network (weights, biases, layers, the neurons per layer and the connections between them)

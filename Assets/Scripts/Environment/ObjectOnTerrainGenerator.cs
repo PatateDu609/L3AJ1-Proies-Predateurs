@@ -95,8 +95,6 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
             origin = Utilities.GetRandomVector3(random, minimumOrigin, maximumOrigin);
         } while(!(Physics.Raycast(origin, Vector3.down, out hit) && boxCollider.ClosestPoint(hit.point) == hit.point && hit.collider.gameObject == terrain));
 
-        Debug.Log("Intantiate");
-
         GameObject o = Instantiate(model);
         o.transform.parent = parent.transform;
         o.transform.position = hit.point + offset;
