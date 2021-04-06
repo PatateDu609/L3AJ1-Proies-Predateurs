@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class ObjectOnTerrainGenerator : MonoBehaviour
 {
-    [MinAttribute(1)]
-    public int count;
-    
-    public GameObject terrain;
     public GameObject[] prefabs;
+    public GameObject terrain;
+
+    [Space()]
+    [MinAttribute(1)]
+    public int groupCount;
+    public bool isUniformGroup;
+
+    [Space()]
+    public Vector3 offset;
 
     [Header("Size")]
     [MinAttribute(1)]
@@ -24,14 +29,18 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
     public int minimumScale;
     public int maximumScale;
 
+    private int layerMask;
+
     public void Start()
     {
+        layerMask = LayerMask.GetMask(LayerMask.LayerToName(terrain.layer));
+
         System.Random random = new System.Random();
 
         GenerateGroups(random);
     }
 
-    public void GenerateGroups(System.Random random)
+    private void GenerateGroups(System.Random random)
     {
         BoxCollider boxCollider = gameObject.GetComponent<BoxCollider>();
 
@@ -42,7 +51,7 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
         Vector3 minimumOrigin = position - size / 2;
         Vector3 maximumOrigin = position + size / 2;
 
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < groupCount; i++)
         {
             RaycastHit hit;
 
@@ -55,19 +64,24 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
         }
     }
 
-    public void GenerateGroup(System.Random random, Vector3 origin) {
-        GameObject g = new GameObject(gameObject.name);
+    private void GenerateGroup(System.Random random, Vector3 origin) {
+        GameObject model = isUniformGroup ? GetRandomPrefab(random) : null;
+
+        GameObject g = new GameObject(model == null ? gameObject.name : model.name + "s");
 
         g.transform.position = origin;
         g.transform.parent = gameObject.transform;
 
         for (int i = 0; i < random.Next(minimumSize, maximumSize); i++)
         {
-            origin = GenerateObject(random, g, origin);
+            origin = GenerateObject(random, g, origin, model);
         }
     }
 
-    public Vector3 GenerateObject(System.Random random, GameObject parent, Vector3 origin) {
+    private Vector3 GenerateObject(System.Random random, GameObject parent, Vector3 origin, GameObject model) {
+        if (model == null)
+            model = GetRandomPrefab(random);
+
         BoxCollider boxCollider = gameObject.GetComponent<BoxCollider>();
 
         float space = (float) Utilities.GetRandomDouble(random, minimumSpace, maximumSpace);
@@ -81,16 +95,18 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
             origin = Utilities.GetRandomVector3(random, minimumOrigin, maximumOrigin);
         } while(!(Physics.Raycast(origin, Vector3.down, out hit) && boxCollider.ClosestPoint(hit.point) == hit.point && hit.collider.gameObject == terrain));
 
-        GameObject o = Instantiate(GetRandomPrefab(random));
+        Debug.Log("Intantiate");
+
+        GameObject o = Instantiate(model);
         o.transform.parent = parent.transform;
-        o.transform.position = hit.point;
+        o.transform.position = hit.point + offset;
         o.transform.rotation = Utilities.GetRandomQuaternion(random, false, true, false);
         o.transform.localScale = Utilities.GetRandomVector3(random, minimumScale, maximumScale);
     
         return origin;
     }
 
-    public GameObject GetRandomPrefab(System.Random random)
+    private GameObject GetRandomPrefab(System.Random random)
     {
         return prefabs[random.Next(0, prefabs.Length)];
     }

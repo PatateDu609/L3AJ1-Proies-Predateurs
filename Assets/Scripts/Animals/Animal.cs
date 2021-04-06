@@ -135,7 +135,7 @@ namespace Animals
         public void eat(GameObject go)
         {
             parameters["hunger"].value = parameters["MAX_HUNGER"].value; // hunger is refilled
-            Destroy(go);
+            // Destroy(go);
 
             gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
             gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
