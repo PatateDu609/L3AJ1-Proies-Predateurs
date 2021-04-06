@@ -26,6 +26,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   species: 2
+  hunger: 0
+  thirst: 0
+  age: 0
+  hp: 0
+  timeSinceDeath: 0
 --- !u!1001 &2268899514583715522
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -56,17 +61,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: b32c6a6cf3a940a408e7e31c10311c4a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 105.322266
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b32c6a6cf3a940a408e7e31c10311c4a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.55
+      value: -3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b32c6a6cf3a940a408e7e31c10311c4a,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4.4726562
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b32c6a6cf3a940a408e7e31c10311c4a,
         type: 3}

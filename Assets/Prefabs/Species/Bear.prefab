@@ -150,7 +150,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7839909056920619275}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 101.62, y: 0.00000047683716, z: 2.9414062}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_Children:
   - {fileID: 7839909056920196473}
@@ -219,6 +219,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   species: 3
+  hunger: 0
+  thirst: 0
+  age: 0
+  hp: 0
+  timeSinceDeath: 0
 --- !u!1 &7839909056920619281
 GameObject:
   m_ObjectHideFlags: 0

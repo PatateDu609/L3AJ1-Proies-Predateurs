@@ -10,6 +10,7 @@ TagManager:
   - BasicStats
   - MidStats
   - AdvancedStats
+  - Tree
   layers:
   - Default
   - TransparentFX
@@ -21,7 +22,7 @@ TagManager:
   - 
   - Stats
   - Terrain
-  - 
+  - Tree
   - 
   - 
   - 
