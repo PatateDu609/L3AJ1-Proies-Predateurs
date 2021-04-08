@@ -7,10 +7,12 @@ public class UserController : MonoBehaviour
     public float speed = 2f;
     public float mouseSpeed = 1.5f;
 
-    public GameObject camera;
+    public new GameObject camera;
 
     public void Update()
     {
+        if (Menu.PauseMenu.Paused)
+            return;
         UpdatePosition();
         UpdateRotation();
     }

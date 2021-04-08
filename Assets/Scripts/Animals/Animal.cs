@@ -122,7 +122,7 @@ namespace Animals
             {
                 if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)
                 {
-                    lookAround();
+                    //lookAround();
                     lastAction = Time.realtimeSinceStartup;
                 }
             }
@@ -248,7 +248,7 @@ namespace Animals
             {
                 if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)
                 {
-                    lookAround();
+                    //lookAround();
                     lastAction = Time.realtimeSinceStartup;
                 }
             }
