@@ -2,11 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+///     <author>Cyril Dubos</author>
+///     Class <c>UserController</c> allows users to control the camera with a mouse and a keyboard.
+/// </summary>
 public class UserController : MonoBehaviour
 {
+    /// <summary>
+    ///     <c>speed</c> models the speed of the user in the scene.
+    /// </summary>
     public float speed = 2f;
+    
+    /// <summary>
+    ///     <c>mouseSpeed</c> models the sensibility of the user mouse.
+    /// </summary>
     public float mouseSpeed = 1.5f;
 
+    /// <summary>
+    ///     <c>camera</c> is the <c>Camera</c> object that will be moved by the controller.
+    /// </summary>
     public new GameObject camera;
 
     public void Update()
@@ -17,6 +31,9 @@ public class UserController : MonoBehaviour
         UpdateRotation();
     }
 
+    /// <summary>
+    ///    This method changes the position of the user in the scene with keyboard controls.
+    /// </summary>
     private void UpdatePosition()
     {
         transform.Translate(Vector3.forward * Input.GetAxis("Vertical") * speed * Time.deltaTime);
@@ -28,6 +45,9 @@ public class UserController : MonoBehaviour
             transform.Translate(Vector3.down * speed * Time.deltaTime);
     }
 
+    /// <summary>
+    ///    This method rotates the camera with mouse controls.
+    /// </summary>
     private void UpdateRotation()
     {
         float yaw = transform.eulerAngles.y + mouseSpeed * Input.GetAxis("Mouse X");

@@ -2,31 +2,79 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+///     <author>Cyril Dubos</author>
+///     Class <c>ObjectOnTerrainGenerator</c> generates some objects on a terrain.
+/// </summary>
 public class ObjectOnTerrainGenerator : MonoBehaviour
 {
+    /// <summary>
+    ///     <c>prefabs</c> is the list of prefabs that will be generated.
+    /// </summary>
     public GameObject[] prefabs;
+
+    /// <summary>
+    ///     <c>terrain</c> is the terrain game object on which the objects will be generated.
+    /// </summary>
     public GameObject terrain;
 
     [Space()]
+
+    /// <summary>
+    ///     <c>groupCount</c> is the number of group of objects.
+    /// </summary>
     [MinAttribute(1)]
     public int groupCount;
+
+    
+    /// <summary>
+    ///     <c>isUniformGroup</c> is <c>true</c> if groups will be unifom, <c>false</c> otherwise.
+    /// </summary>
     public bool isUniformGroup;
 
     [Space()]
+
+    /// <summary>
+    ///     <c>offset</c> is is the offset used to place the game objects.
+    /// </summary>
     public Vector3 offset;
 
     [Header("Size")]
+
+    /// <summary>
+    ///     <c>minimumSize</c> is the minimum size of a group.
+    /// </summary>
     [MinAttribute(1)]
     public int minimumSize;
+
+    /// <summary>
+    ///     <c>maximumSize</c> is the maximum size of a group.
+    /// </summary>
     [MinAttribute(1)]
     public int maximumSize;
 
     [Header("Space")]
+
+    /// <summary>
+    ///     <c>minimumSpace</c> is the minimum space between two objects of a same group.
+    /// </summary>
     public int minimumSpace;
+    
+    /// <summary>
+    ///     <c>maximumSpace</c> is the maximum space between two objects of a same group.
+    /// </summary>
     public int maximumSpace;
 
     [Header("Scale")]
+
+    /// <summary>
+    ///     <c>minimumScale</c> is the minimum scale of a generated object.
+    /// </summary>
     public int minimumScale;
+
+    /// <summary>
+    ///     <c>maximumScale</c> is the maximum scale of a generated object.
+    /// </summary>
     public int maximumScale;
 
     private int layerMask;
@@ -40,6 +88,10 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
         GenerateGroups(random);
     }
 
+    /// <summary>
+    ///    This method generates all the groups.
+    /// </summary>
+    /// <param name="random">a <c>System.Random</c> object</param>
     private void GenerateGroups(System.Random random)
     {
         BoxCollider boxCollider = gameObject.GetComponent<BoxCollider>();
@@ -64,23 +116,35 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    ///    This method generates all the objects of a group.
+    /// </summary>
+    /// <param name="random">a <c>System.Random</c> object</param>
+    /// <param name="origin">the origin of the group</param>
     private void GenerateGroup(System.Random random, Vector3 origin) {
-        GameObject model = isUniformGroup ? GetRandomPrefab(random) : null;
+        GameObject prefab = isUniformGroup ? GetRandomPrefab(random) : null;
 
-        GameObject g = new GameObject(model == null ? gameObject.name : model.name + "s");
+        GameObject g = new GameObject(prefab == null ? gameObject.name : prefab.name + "s");
 
         g.transform.position = origin;
         g.transform.parent = gameObject.transform;
 
         for (int i = 0; i < random.Next(minimumSize, maximumSize); i++)
         {
-            origin = GenerateObject(random, g, origin, model);
+            origin = GenerateObject(random, g, origin, prefab);
         }
     }
 
-    private Vector3 GenerateObject(System.Random random, GameObject parent, Vector3 origin, GameObject model) {
-        if (model == null)
-            model = GetRandomPrefab(random);
+    /// <summary>
+    ///    This method generates a new object.
+    /// </summary>
+    /// <param name="random">a <c>System.Random</c> object</param>
+    /// <param name="parent">the parent of the object (the group object)</param>
+    /// <param name="origin">the origin of the object (the previous object position)</param>
+    /// <param name="prefab">the prefab of the object that will be used</param>
+    private Vector3 GenerateObject(System.Random random, GameObject parent, Vector3 origin, GameObject prefab) {
+        if (prefab == null)
+            prefab = GetRandomPrefab(random);
 
         BoxCollider boxCollider = gameObject.GetComponent<BoxCollider>();
 
@@ -95,7 +159,7 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
             origin = Utilities.GetRandomVector3(random, minimumOrigin, maximumOrigin);
         } while(!(Physics.Raycast(origin, Vector3.down, out hit) && boxCollider.ClosestPoint(hit.point) == hit.point && hit.collider.gameObject == terrain));
 
-        GameObject o = Instantiate(model);
+        GameObject o = Instantiate(prefab);
         o.transform.parent = parent.transform;
         o.transform.position = hit.point + offset;
         o.transform.rotation = Utilities.GetRandomQuaternion(random, false, true, false);
@@ -104,6 +168,9 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
         return origin;
     }
 
+    /// <summary>
+    ///    This method returns a random prefab from the <c>prefabs</c> list.
+    /// </summary>
     private GameObject GetRandomPrefab(System.Random random)
     {
         return prefabs[random.Next(0, prefabs.Length)];
