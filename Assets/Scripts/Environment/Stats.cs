@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UI.ProceduralImage;
+using UnityEngine.UI.Extensions;
+using System;
 
 using Animals;
 
@@ -14,6 +17,23 @@ namespace Environment
         public GameObject midStats;
         public GameObject advancedStats;
 
+        public GameObject midStatsEntry;
+
+        [Header("Advanced stats parameters")]
+        [Range(10, 100)]
+        public int valuesThreshold = 50;
+        public GameObject advancedViewport;
+        public GameObject advancedViewportElement;
+        public GameObject legendElement;
+        public GameObject legendViewport;
+        public List<Color> legendColor;
+
+        private Dictionary<string, GraphData> populations = new Dictionary<string, GraphData>();
+        private const int inc = 5;
+
+        private bool isMidActive = false;
+        private bool isAdvActive = false;
+
         private void Start()
         {
             parameters = (Menu.EditAction.parameters ?? Parameters.Load()).parameters;
@@ -23,6 +43,28 @@ namespace Environment
             basicStats.SetActive(false);
             midStats.SetActive(false);
             advancedStats.SetActive(false);
+
+            string[] species = Enum.GetNames(typeof(Species));
+            List<Color> colors = new List<Color>(legendColor);
+            foreach (string sp in species)
+            {
+                int currentPop = GameObject.FindGameObjectsWithTag(sp).Length;
+                GameObject vp = GameObject.Instantiate(advancedViewportElement, advancedViewport.transform);
+                GameObject legend = GameObject.Instantiate(legendElement, legendViewport.transform);
+                UILineRenderer renderer = vp.GetComponent<UILineRenderer>();
+
+                vp.name = sp;
+                renderer.Points = new Vector2[1];
+                renderer.Points[0] = new Vector2(0, 0);
+
+                SetColor(legend, ref colors);
+
+                renderer.color = legend.GetComponentInChildren<ProceduralImage>().color;
+                legend.GetComponentInChildren<Text>().text = sp;
+
+                GraphData graphData = new GraphData(new List<int> { currentPop }, renderer, null);
+                populations.Add(sp, graphData);
+            }
         }
 
         private void Update()
@@ -33,30 +75,78 @@ namespace Environment
 
             if (!ctrl && !shift && f3)
                 basicStats.SetActive(!basicStats.activeSelf);
-            else if (!ctrl && shift && f3)
+            else if ((!ctrl && shift && f3) || isMidActive)
             {
                 SetMidStats();
-
-                basicStats.SetActive(!midStats.activeSelf);
-                midStats.SetActive(!midStats.activeSelf);
+                if ((ctrl && shift && f3) || !isMidActive)
+                    isMidActive = !isMidActive;
+                basicStats.SetActive(isMidActive);
+                midStats.SetActive(isMidActive);
             }
-            else if (ctrl && shift && f3)
+            else if ((ctrl && shift && f3) || isAdvActive)
             {
                 SetAdvancedStats();
-                basicStats.SetActive(!advancedStats.activeSelf);
-                midStats.SetActive(!advancedStats.activeSelf);
-                advancedStats.SetActive(!advancedStats.activeSelf);
+                SetMidStats();
+
+                if ((ctrl && shift && f3) || !isAdvActive)
+                    isAdvActive = !isAdvActive;
+
+                basicStats.SetActive(isAdvActive);
+                midStats.SetActive(isAdvActive);
+                advancedStats.SetActive(isAdvActive);
             }
+
+            if (Time.frameCount % inc == 0)
+                UpdatePop();
         }
 
         private void SetMidStats()
         {
-            //TODO : link animal's spawn to stats
+            if (midStats.transform.childCount == 0)
+            {
+                foreach (string species in Enum.GetNames(typeof(Species)))
+                {
+                    GameObject go = Instantiate(midStatsEntry, midStats.transform);
+
+                    go.name = species;
+                    go.GetComponent<Text>().text = species + " : " + GameObject.FindGameObjectsWithTag(species).Length;
+                }
+                return;
+            }
+            for (int i = 0; i < midStats.transform.childCount; i++)
+            {
+                GameObject go = midStats.transform.GetChild(i).gameObject;
+                go.GetComponent<Text>().text = go.name + " : " + populations[go.name].values[populations[go.name].values.Count - 1];
+            }
         }
 
         private void SetAdvancedStats()
         {
+            int min, max;
+            List<Vector2> points = new List<Vector2>();
+            float w = advancedViewport.GetComponent<RectTransform>().rect.width;
+            float increment = w / valuesThreshold;
 
+            GetMinMax(out min, out max);
+            
+            foreach (GraphData data in populations.Values)
+            {
+                points.Clear();
+
+                foreach (int value in data.values)
+                {
+                    Vector2 point = new Vector2(0, 0);
+                    if (points.Count != 0)
+                    {
+                        float trueX = Mathf.Lerp(0, w, points[points.Count - 1].x);
+                        point.x = Mathf.InverseLerp(0, w, trueX + increment);
+                    }
+                    point.y = Mathf.InverseLerp(min, max, value);
+                    points.Add(point);
+                }
+
+                data.renderer.Points = points.ToArray();
+            }
         }
 
         private void SetBasicStats()
@@ -73,6 +163,58 @@ namespace Environment
                 }
                 go.GetComponent<Text>().text += parameters[go.name].value;
             }
+        }
+
+        private void UpdatePop()
+        {
+            string[] species = Enum.GetNames(typeof(Species));
+
+            foreach (string sp in species)
+            {
+                int currentPop = GameObject.FindGameObjectsWithTag(sp).Length;
+                populations[sp].values.Add(currentPop);
+                if (populations[sp].values.Count > valuesThreshold)
+                    populations[sp].values.RemoveAt(0);
+            }
+        }
+
+        private void GetMinMax(out int min, out int max)
+        {
+            min = int.MaxValue;
+            max = int.MinValue;
+
+            foreach (GraphData species in populations.Values)
+            {
+                foreach (int pop in species.values)
+                {
+                    if (pop < min)
+                        min = pop;
+                    else if (pop > max)
+                        max = pop;
+                }
+            }
+        }
+
+        private void SetColor(GameObject legend, ref List<Color> colors)
+        {
+            ProceduralImage image = legend.GetComponentInChildren<ProceduralImage>();
+
+            int index = UnityEngine.Random.Range(0, colors.Count);
+            image.color = colors[index];
+
+            colors.RemoveAt(index);
+        }
+    }
+
+    internal struct GraphData
+    {
+        public List<int> values;
+        public UILineRenderer renderer;
+
+        public GraphData(List<int> vals, UILineRenderer render, GameObject legend)
+        {
+            values = vals;
+            renderer = render;
         }
     }
 }

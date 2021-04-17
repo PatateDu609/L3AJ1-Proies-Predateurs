@@ -52,7 +52,6 @@ namespace Animals
 
         public bool isHungry()
         {
-            //return true;
             return parameters["hunger"].value < parameters["MAX_HUNGER"].value / 3; // the animal is hungry if its current hunger level is under the third of the max
         }
 
@@ -80,13 +79,16 @@ namespace Animals
             RaycastHit hit;
 
 
-            gameObject.transform.Rotate(Vector3.up, UnityEngine.Random.Range(0, 360));
+            //gameObject.transform.Rotate(Vector3.up, UnityEngine.Random.Range(0, 360));
             //gameObject.GetComponent<Rigidbody>().MovePosition(gameObject.GetComponent<Rigidbody>().position + gameObject.transform.forward * UnityEngine.Random.Range(minDistance, maxDistance) * speed);
-            gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+            //gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            //gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             //gameObject.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * parameters["MAX_RUN_SPEED"].value, ForceMode.Force);
-            gameObject.transform.Translate(Vector3.forward * parameters["MAX_RUN_SPEED"].value);
 
+            gameObject.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * speed, ForceMode.Force);
+            gameObject.GetComponent<Rigidbody>().velocity = speed * gameObject.GetComponent<Rigidbody>().velocity.normalized;
+
+            return;
             foreach (Vector3 v in vectors)
             {
                 Debug.DrawRay(gameObject.transform.position, gameObject.transform.TransformDirection(-v), Color.green, 5);
@@ -206,6 +208,8 @@ namespace Animals
                 animator.SetBool("died", true);
                 parameters["isAlive"].value = false;
                 parameters.Add("timeSinceDeath", new Parameters.ParameterEntry("timeSinceDeath", 0, false));
+
+                gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
             }
         }
 
@@ -226,32 +230,32 @@ namespace Animals
         override public void FixedUpdate()
         {
             base.FixedUpdate();
+
             time();
 
-             if (isHungry())
-            {
-                if(target == null)
-                {
-                    lookForFood();
-                } else
-                {
-                    moveToTarget();
-                    if (!target.gameObject.GetComponent<NEAT>().Animal.parameters["isAlive"].value)
-                    {
-                        eat(target.gameObject);
-                        Debug.Log("eaten");
-                    }
-                }
+            if (!parameters["isAlive"].value)
+                return;
 
-            }      
-            else
-            {
-                if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)
-                {
-                    //lookAround();
-                    lastAction = Time.realtimeSinceStartup;
-                }
-            }
+            //if (isHungry())
+            //{
+            //if (target == null)
+            //{
+            //    lookForFood();
+            //}
+            //else
+            //{
+            //    moveToTarget();
+            //    if (!target.gameObject.GetComponent<NEAT>().Animal.parameters["isAlive"].value)
+            //    {
+            //        eat(target.gameObject);
+            //        Debug.Log("eaten");
+            //    }
+            //}
+            //}
+            //else
+            //{
+            lookAround();
+            //}
 
             ////Debug.Log("time : " + Time.realtimeSinceStartup);
             //if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)
@@ -285,3 +289,4 @@ namespace Animals
         }
     }
 }
+

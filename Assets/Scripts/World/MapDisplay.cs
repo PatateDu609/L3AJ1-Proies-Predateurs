@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor.AI;
 
 
 /* Méthode de génération procédurale inspirée par la série de tutoriels de Sebastian Lague :
@@ -39,5 +40,10 @@ public class MapDisplay : MonoBehaviour
         MeshCollider meshCollider = meshFilter.gameObject.AddComponent<MeshCollider>();
         meshCollider.sharedMaterial = physicMaterial;
         meshRenderer.sharedMaterial.mainTexture = texture;
+
+        if (Application.isPlaying)
+            NavMeshBuilder.BuildNavMesh();
+        else
+            NavMeshBuilder.BuildNavMeshAsync();
     }
 }

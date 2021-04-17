@@ -49,9 +49,9 @@ namespace Environment
             deer.parameters["id"].value = "deer";
             deer.parameters["ADULT_AGE"].value = 3;
             deer.parameters["MAX_AGE"].value = 20;
-            deer.parameters["MAX_HUNGER"].value = 75; //25
+            deer.parameters["MAX_HUNGER"].value = 75; //75
             deer.parameters["MAX_THIRST"].value = 15;
-            deer.parameters["MAX_RUN_SPEED"].value = 5; // 45 is the true value
+            deer.parameters["MAX_RUN_SPEED"].value = 45; // 45 is the true value
             deer.parameters["pregnancyTime"].value = 4;
             deer.parameters["nbOfBabyPerLitter"].value = 3;
             deer.parameters["interactionLevel"].value = -8;
@@ -63,7 +63,7 @@ namespace Environment
             bear.parameters["id"].value = "bear";
             bear.parameters["ADULT_AGE"].value = 16;
             bear.parameters["MAX_AGE"].value = 80;
-            bear.parameters["MAX_HUNGER"].value = 75; //25
+            bear.parameters["MAX_HUNGER"].value = 15; //75
             bear.parameters["MAX_THIRST"].value = 15;
             bear.parameters["MAX_RUN_SPEED"].value = 2; // 45 is the true value
             bear.parameters["pregnancyTime"].value = 4;

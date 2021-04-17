@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8862346269401676158}
   - component: {fileID: 2842766576735990862}
   m_Layer: 8
-  m_Name: Lapin
+  m_Name: MidStatEntry
   m_TagString: MidStats
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71,7 +71,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
