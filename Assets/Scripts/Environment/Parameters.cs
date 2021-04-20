@@ -65,7 +65,7 @@ namespace Environment
             bear.parameters["MAX_AGE"].value = 80;
             bear.parameters["MAX_HUNGER"].value = 15; //75
             bear.parameters["MAX_THIRST"].value = 15;
-            bear.parameters["MAX_RUN_SPEED"].value = 2; // 45 is the true value
+            bear.parameters["MAX_RUN_SPEED"].value = 45; // 45 is the true value
             bear.parameters["pregnancyTime"].value = 4;
             bear.parameters["nbOfBabyPerLitter"].value = 3;
             bear.parameters["interactionLevel"].value = -8;

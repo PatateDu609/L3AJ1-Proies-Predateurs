@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Environment;
 using Agents;
+using UnityEngine.AI;
 
 namespace Animals
 {
@@ -36,13 +37,13 @@ namespace Animals
         public void Start()
         {
             animator = gameObject.GetComponent<Animator>();
-            for (int i = -30; i <= 30; i += 10)
-            {
-                for (int j = -20; j <= 20; j += 5)
-                {
-                    vectors.Add((Quaternion.AngleAxis(i, Vector3.right) * Quaternion.AngleAxis(j, Vector3.up) * -Vector3.forward).normalized * gameObject.transform.localScale.z * 15);
-                }
-            }
+            //for (int i = -30; i <= 30; i += 10)
+            //{
+            //    for (int j = -20; j <= 20; j += 5)
+            //    {
+            //        vectors.Add((Quaternion.AngleAxis(i, Vector3.right) * Quaternion.AngleAxis(j, Vector3.up) * -Vector3.forward).normalized * gameObject.transform.localScale.z * 15);
+            //    }
+            //}
         }
 
         public bool isThirsty()
@@ -75,30 +76,16 @@ namespace Animals
         // moves in a random direction
         public void lookAround()
         {
-            float speed = parameters.ContainsKey("MAX_RUN_SPEED") ? parameters["MAX_RUN_SPEED"].value : 0;
-            RaycastHit hit;
+            NavMeshAgent agent = gameObject.GetComponent<NavMeshAgent>();
 
-
-            //gameObject.transform.Rotate(Vector3.up, UnityEngine.Random.Range(0, 360));
-            //gameObject.GetComponent<Rigidbody>().MovePosition(gameObject.GetComponent<Rigidbody>().position + gameObject.transform.forward * UnityEngine.Random.Range(minDistance, maxDistance) * speed);
-            //gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            //gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-            //gameObject.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * parameters["MAX_RUN_SPEED"].value, ForceMode.Force);
-
-            gameObject.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * speed, ForceMode.Force);
-            gameObject.GetComponent<Rigidbody>().velocity = speed * gameObject.GetComponent<Rigidbody>().velocity.normalized;
-
-            return;
-            foreach (Vector3 v in vectors)
+            if (!agent.hasPath)
             {
-                Debug.DrawRay(gameObject.transform.position, gameObject.transform.TransformDirection(-v), Color.green, 5);
-                if (Physics.Raycast(gameObject.transform.position, gameObject.transform.TransformDirection(-v), out hit))
+                MapGenerator mapGenerator = MapGenerator.instance;
+                Vector3 dest;
+                do
                 {
-                    if (hit.transform.gameObject.name == "Water")
-                    {
-                        gameObject.transform.Rotate(Vector3.up, 180);
-                    }
-                }
+                    dest = mapGenerator.GetRandomPointOnMesh(gameObject.transform.position, parameters["MAX_RUN_SPEED"].value);
+                } while (!agent.SetDestination(dest));
             }
         }
 
@@ -231,7 +218,7 @@ namespace Animals
         {
             base.FixedUpdate();
 
-            time();
+            //time();
 
             if (!parameters["isAlive"].value)
                 return;

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.AI;
 
 /* Méthode de génération procédurale inspirée par la série de tutoriels de Sebastian Lague :
  * https://www.youtube.com/playlist?list=PLFt_AvWsXl0eBW2EiBtl_sxmDtSgZBxB3
@@ -144,7 +145,13 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
+    public Vector3 GetRandomPointOnMesh(Vector3 pos, float walkRadius)
+    {
+        Vector3 randomDirection = Random.insideUnitSphere * walkRadius;
 
+        NavMesh.SamplePosition(pos + randomDirection, out NavMeshHit hit, walkRadius, 1);
+        return hit.position;
+    }
 }
 
 

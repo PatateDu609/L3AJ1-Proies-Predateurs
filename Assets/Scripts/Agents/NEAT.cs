@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Animals;
-using System;
-using System.Linq;
+using UnityEngine.AI;
 
 // Tuto of Underpower Jet : https://www.youtube.com/watch?v=Yq0SfuiOVYE
 
@@ -13,6 +12,7 @@ namespace Agents
         private NeuralNetwork nn;
         private Entity animal;
         public Species species;
+
         public Entity Animal
         {
             get
@@ -50,6 +50,7 @@ namespace Agents
                 animal.parameters["hunger"].value = animal.parameters["MAX_HUNGER"].value;
                 animal.parameters["HP"].value = animal.parameters["HPMax"].value;
                 (animal as Animal).Start();
+                GetComponent<NavMeshAgent>().enabled = true;
             }
 
             //nn = new NeuralNetwork(new int[] { });
