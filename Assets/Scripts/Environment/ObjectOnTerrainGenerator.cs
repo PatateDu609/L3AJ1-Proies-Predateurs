@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 ///     <author>Cyril Dubos</author>
@@ -31,6 +32,11 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
     ///     <c>isUniformGroup</c> is <c>true</c> if groups will be unifom, <c>false</c> otherwise.
     /// </summary>
     public bool isUniformGroup;
+
+    /// <summary>
+    ///     <c>isNavMeshObstacle</c> is <c>true</c> if objects are Nav Mesh Obstacle.
+    /// </summary>
+    public bool isNavMeshObstacle;
 
     [Space()]
 
@@ -164,6 +170,13 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
         o.transform.position = hit.point + offset;
         o.transform.rotation = Utilities.GetRandomQuaternion(random, false, true, false);
         o.transform.localScale = Utilities.GetRandomVector3(random, minimumScale, maximumScale);
+
+        if (isNavMeshObstacle)
+        {
+            NavMeshObstacle navMeshObstacle = o.AddComponent<NavMeshObstacle>();
+            navMeshObstacle.shape = NavMeshObstacleShape.Capsule;
+            navMeshObstacle.carving = true;
+        }
     
         return origin;
     }

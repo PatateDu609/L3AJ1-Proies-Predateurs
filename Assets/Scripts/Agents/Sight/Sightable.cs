@@ -13,11 +13,7 @@ public class Sightable : MonoBehaviour
 
         if (manager && collider == manager.sphereCollider)
             if (manager.IsSightable(gameObject))
-            {
-
-                Debug.Log("Ente!r");
                 manager.Add(gameObject);
-            }
     }
 
     public void OnTriggerStay(Collider collider)
