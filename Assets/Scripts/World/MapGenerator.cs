@@ -61,6 +61,8 @@ public class MapGenerator : MonoBehaviour
 
     public static MapGenerator instance;
 
+    public NavMeshSurface surface;
+
     /// <summary>
     /// Permet de charger le monde et ses textures lors du lancement
     /// </summary>
@@ -68,6 +70,11 @@ public class MapGenerator : MonoBehaviour
     {
         instance = this;
         DrawMapInEditor();
+    }
+
+    private void Start()
+    {
+        surface.BuildNavMesh();
     }
 
     /// <summary>

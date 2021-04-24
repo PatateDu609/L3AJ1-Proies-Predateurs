@@ -41,13 +41,12 @@ namespace Animals
 
         public bool isThirsty()
         {
-            return parameters["thirst"].value < parameters["MAX_THIRST"].value / 3; // the animal is thirsty if its current thirst level is under the third of the max
+            return parameters["thirst"].value < parameters["MAX_THIRST"].value * .6; // the animal is thirsty if its current thirst level is under the third of the max
         }
 
         public bool isHungry()
         {
-            return false;
-            //return parameters["hunger"].value < parameters["MAX_HUNGER"].value / 3; // the animal is hungry if its current hunger level is under the third of the max
+            return parameters["hunger"].value < parameters["MAX_HUNGER"].value * .6; // the animal is hungry if its current hunger level is under the third of the max
         }
 
         public bool needsToReproduce()
@@ -91,20 +90,19 @@ namespace Animals
                     dest = MapGenerator.GetRandomPointOnMesh(gameObject.transform.position, gameObject.transform.localScale.z * parameters["MAX_RUN_SPEED"].value);
                 } while (!agent.SetDestination(dest));
 
-                //animator.SetBool("isWalking", true);
-                //animator.SetBool("isRunning", false);
+                animator.SetBool("isWalking", true);
+                animator.SetBool("isRunning", false);
             }
         }
 
         private void lookForMate()
         {
             SightManager sightManager = gameObject.GetComponent<SightManager>();
-            List<GameObject> sight = sightManager.gameObjects;
+            Dictionary<GameObject, Vector3> sight = sightManager.gameObjects;
 
-            sight.RemoveAll(item => item == null);
-
-            foreach (GameObject sightable in sight)
+            foreach (var entry in sight)
             {
+                GameObject sightable = entry.Key;
                 if (gameObject.tag == sightable.tag && parameters["isMale"].value != sightable.gameObject.GetComponent<NEAT>().Animal.parameters["isMale"].value)
                 {
                     target = sightable.transform;
@@ -117,12 +115,11 @@ namespace Animals
         private void lookForFood()
         {
             SightManager sightManager = gameObject.GetComponent<SightManager>();
-            List<GameObject> sight = sightManager.gameObjects;
+            Dictionary<GameObject, Vector3> sight = sightManager.gameObjects;
 
-            sight.RemoveAll(item => item == null);
-
-            foreach (GameObject sightable in sight)
+            foreach (var entry in sight)
             {
+                GameObject sightable = entry.Key;
                 if (targets.Contains(sightable.GetComponent<NEAT>().species))
                 {
                     target = sightable.transform;
@@ -131,22 +128,32 @@ namespace Animals
                 }
             }
         }
-        /*
+
         private void flee()
         {
             SightManager sightManager = gameObject.GetComponent<SightManager>();
-            List<GameObject> sight = sightManager.gameObjects;
+            Dictionary<GameObject, Vector3> sight = sightManager.gameObjects;
 
-            foreach (GameObject sightable in sight)
+            foreach (var entry in sight)
             {
-                if (targets.Contains(sightable.GetComponent<NEAT>().species) && sightable.GetComponent<NEAT>().Animal)
+                GameObject sightable = entry.Key;
+                Entity entity = sightable.GetComponent<NEAT>().Animal;
+
+                if (entity is Animal)
                 {
-                    target = sightable.transform;
-                    targetGO = sightable;
-                    break;
+                    bool isAnimalSightedPredator = (entity as Animal).targets.Contains(gameObject.GetComponent<NEAT>().species);
+                    if (isAnimalSightedPredator)
+                    {
+                        NavMeshAgent agent = gameObject.GetComponent<NavMeshAgent>();
+                        Vector3 predator = sightable.transform.position;
+                        Vector3 current = gameObject.transform.position;
+
+                        agent.Move((current - predator).normalized * parameters["MAX_RUN_SPEED"].value);
+                        break;
+                    }
                 }
             }
-        }*/
+        }
 
         /*
         private void lookForWater()
@@ -165,8 +172,8 @@ namespace Animals
         private void moveToTarget()
         {
             gameObject.GetComponent<NavMeshAgent>().SetDestination(target.position);
-            //animator.SetBool("isWalking", false);
-            //animator.SetBool("isRunning", true);
+            animator.SetBool("isWalking", false);
+            animator.SetBool("isRunning", true);
 
             Entity entity = target.gameObject.GetComponent<NEAT>().Animal;
             if (targetIsMate())
@@ -198,12 +205,12 @@ namespace Animals
             }
             if (Vector3.Distance(gameObject.transform.position, target.position) <= 10)
             {
+                animator.SetBool("isAttacking", true);
                 int HP;
                 int ATK;
                 if (entity.parameters.ContainsKey("HP"))
                 {
                     HP = entity.parameters["HP"].value;
-
                 }
                 else HP = 1;
 
@@ -216,6 +223,8 @@ namespace Animals
 
                 HP -= ATK;
                 entity.parameters["HP"].value = HP;
+
+                animator.SetBool("isAttacking", false);
             }
         }
 
@@ -232,7 +241,7 @@ namespace Animals
 
         public void drink()
         {
-            parameters["thirst"].value = parameters["MAX_THIRST"].value; // thirst is refilled
+            parameters["thirst"].value = parameters["MAX_THIRST"].value; // t/hirst is refilled
         }
 
         private void death()
@@ -294,31 +303,7 @@ namespace Animals
                     eat(target.gameObject);
             }
 
-
-            ////Debug.Log("time : " + Time.realtimeSinceStartup);
-            //if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)
-            //{
-            //    if (target == null)
-            //    {
-            //        lookForRessource();
-            //    }
-            //    else
-            //    {
-            //        moveToTarget();
-            //    }
-
-            //    lastAction = Time.realtimeSinceStartup;
-
-            //    //parameters["thirst"].value--;
-            //    parameters["hunger"].value--;
-
-            //    //Debug.Log("thirst : " + parameters["thirst"].value);
-            //    //if (this is Wolf)
-            //    //    Debug.Log("hunger : " + parameters["hunger"].value + ", is Hungry ? " + (isHungry() ? "yes" : "no") + ", found target ? " + (target == null ? "no" : "yes"));
-
-            //    //if (parameters["thirst"].value == 0 || parameters["hunger"].value == 0)
-            //    //if (parameters["hunger"].value == 0)
-            //}
+            flee();
         }
     }
 }

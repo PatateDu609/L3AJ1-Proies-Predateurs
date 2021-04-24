@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor.AI;
-
+using UnityEngine.AI;
 
 /* Méthode de génération procédurale inspirée par la série de tutoriels de Sebastian Lague :
  * https://www.youtube.com/playlist?list=PLFt_AvWsXl0eBW2EiBtl_sxmDtSgZBxB3
@@ -14,7 +13,7 @@ public class MapDisplay : MonoBehaviour
     public Renderer textureRenderer;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
-    
+
     /// <summary>
     /// Application des textures dans les cas de drawMode égal à NoiseMap ou ColourMap
     /// </summary>
@@ -39,11 +38,6 @@ public class MapDisplay : MonoBehaviour
         Physics.BakeMesh(meshFilter.sharedMesh.GetInstanceID(), false);
         MeshCollider meshCollider = meshFilter.gameObject.AddComponent<MeshCollider>();
         meshCollider.sharedMaterial = physicMaterial;
-        meshRenderer.sharedMaterial.mainTexture = texture;
-
-        if (Application.isPlaying)
-            NavMeshBuilder.BuildNavMesh();
-        else
-            NavMeshBuilder.BuildNavMeshAsync();
+        //meshRenderer.sharedMaterial.mainTexture = texture;
     }
 }

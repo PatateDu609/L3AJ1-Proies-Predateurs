@@ -8195,7 +8195,6 @@ GameObject:
   - component: {fileID: 7747851883595101838}
   - component: {fileID: 4681856797344121385}
   - component: {fileID: 1798421696395708380}
-  - component: {fileID: 5306149890137011410}
   m_Layer: 0
   m_Name: Wolf
   m_TagString: Wolf
@@ -8325,18 +8324,6 @@ MonoBehaviour:
   sphereCollider: {fileID: 0}
   gameObjects: []
 --- !u!114 &1798421696395708380
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2156221750587477158}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e5fb5d0bb77ff2418b066f688234f7f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &5306149890137011410
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
