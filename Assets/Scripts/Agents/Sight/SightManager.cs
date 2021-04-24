@@ -25,7 +25,7 @@ public class SightManager : MonoBehaviour
     /// <summary>
     ///     <c>gameObjects</c> lists all game objects sightable.
     /// </summary>
-    public List<GameObject> gameObjects;
+    public Dictionary<GameObject, Vector3> gameObjects;
 
     public void Start()
     {
@@ -41,7 +41,7 @@ public class SightManager : MonoBehaviour
         sphereCollider.isTrigger = true;
         sphereCollider.radius = radius;
 
-        gameObjects = new List<GameObject>();
+        gameObjects = new Dictionary<GameObject, Vector3>();
     }
 
     /// <summary>
@@ -50,8 +50,8 @@ public class SightManager : MonoBehaviour
     /// <param name="other">the game object</param>
     public void Add(GameObject other)
     {
-        if (!gameObjects.Contains(other))
-            gameObjects.Add(other);
+        if (!gameObjects.ContainsKey(other))
+            gameObjects.Add(other, getPosition(other));
     }
 
     /// <summary>
@@ -60,8 +60,17 @@ public class SightManager : MonoBehaviour
     /// <param name="other">the game object</param>
     public void Remove(GameObject other)
     {
-        if (gameObjects.Contains(other))
+        if (gameObjects.ContainsKey(other))
             gameObjects.Remove(other);
+    }
+    /// <summary>
+    ///     This methods gives the closest position of the given object
+    /// </summary>
+    /// <param name="other">the game object</param>
+    /// <returns>the closest position.
+    public Vector3 getPosition(GameObject other)
+    {
+        return other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
     }
 
     /// <summary>
@@ -72,8 +81,7 @@ public class SightManager : MonoBehaviour
     public bool IsSightable(GameObject other)
     {
         Vector3 forward = transform.forward;
-        Vector3 position = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
-        Vector3 direction = (position - gameObject.transform.position).normalized;
+        Vector3 direction = (getPosition(other) - gameObject.transform.position).normalized;
 
         if (!(Mathf.Acos(Vector3.Dot(forward, direction)) * Mathf.Rad2Deg <= angle / 2))
             return false;
