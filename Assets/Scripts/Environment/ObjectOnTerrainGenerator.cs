@@ -123,6 +123,8 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
                 origin.y = maximumOrigin.y;
             } while(!(Physics.Raycast(origin, Vector3.down, out hit) && boxCollider.ClosestPoint(hit.point) == hit.point && hit.collider.gameObject == terrain));
 
+            // Debug.DrawLine(hit.point, hit.point + Vector3.up * 100, Color.blue, 100f);
+
             GenerateGroup(random, origin);
         }
     }
@@ -169,6 +171,8 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
         do {
             origin = Utilities.GetRandomVector3(random, minimumOrigin, maximumOrigin);
         } while(!(Physics.Raycast(origin, Vector3.down, out hit) && boxCollider.ClosestPoint(hit.point) == hit.point && hit.collider.gameObject == terrain));
+
+        // Debug.DrawLine(hit.point, hit.point + Vector3.up * 100, Color.red, 100f);
 
         GameObject o = Instantiate(prefab);
         o.transform.parent = parent.transform;
