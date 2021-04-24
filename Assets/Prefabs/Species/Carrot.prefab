@@ -31,6 +31,18 @@ MonoBehaviour:
   age: 0
   hp: 0
   timeSinceDeath: 0
+--- !u!114 &8119519131508878735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1422479732600779667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e5fb5d0bb77ff2418b066f688234f7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2268899514583715522
 PrefabInstance:
   m_ObjectHideFlags: 0

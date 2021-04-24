@@ -14,7 +14,7 @@ namespace Animals
         public List<Species> targets = new List<Species>();
         public Transform transform;
         public Transform target;
-        public List<Vector3> vectors = new List<Vector3>();
+        public GameObject targetGO;
         private Animator animator;
 
         public Animal() : base()
@@ -37,13 +37,6 @@ namespace Animals
         public void Start()
         {
             animator = gameObject.GetComponent<Animator>();
-            //for (int i = -30; i <= 30; i += 10)
-            //{
-            //    for (int j = -20; j <= 20; j += 5)
-            //    {
-            //        vectors.Add((Quaternion.AngleAxis(i, Vector3.right) * Quaternion.AngleAxis(j, Vector3.up) * -Vector3.forward).normalized * gameObject.transform.localScale.z * 15);
-            //    }
-            //}
         }
 
         public bool isThirsty()
@@ -53,7 +46,18 @@ namespace Animals
 
         public bool isHungry()
         {
-            return parameters["hunger"].value < parameters["MAX_HUNGER"].value / 3; // the animal is hungry if its current hunger level is under the third of the max
+            return false;
+            //return parameters["hunger"].value < parameters["MAX_HUNGER"].value / 3; // the animal is hungry if its current hunger level is under the third of the max
+        }
+
+        public bool needsToReproduce()
+        {
+            return parameters["age"].value >= parameters["ADULT_AGE"].value;
+        }
+
+        public bool targetIsMate()
+        {
+            return targetGO.GetComponent<NEAT>().Animal.GetType() == GetType();
         }
 
         public void lookForRessource()
@@ -84,38 +88,65 @@ namespace Animals
                 Vector3 dest;
                 do
                 {
-                    dest = mapGenerator.GetRandomPointOnMesh(gameObject.transform.position, parameters["MAX_RUN_SPEED"].value);
+                    dest = MapGenerator.GetRandomPointOnMesh(gameObject.transform.position, gameObject.transform.localScale.z * parameters["MAX_RUN_SPEED"].value);
                 } while (!agent.SetDestination(dest));
+
+                //animator.SetBool("isWalking", true);
+                //animator.SetBool("isRunning", false);
+            }
+        }
+
+        private void lookForMate()
+        {
+            SightManager sightManager = gameObject.GetComponent<SightManager>();
+            List<GameObject> sight = sightManager.gameObjects;
+
+            sight.RemoveAll(item => item == null);
+
+            foreach (GameObject sightable in sight)
+            {
+                if (gameObject.tag == sightable.tag && parameters["isMale"].value != sightable.gameObject.GetComponent<NEAT>().Animal.parameters["isMale"].value)
+                {
+                    target = sightable.transform;
+                    targetGO = sightable;
+                    break;
+                }
             }
         }
 
         private void lookForFood()
         {
-            RaycastHit hit;
-            bool foundFood = false;
-            foreach (Vector3 v in vectors)
+            SightManager sightManager = gameObject.GetComponent<SightManager>();
+            List<GameObject> sight = sightManager.gameObjects;
+
+            sight.RemoveAll(item => item == null);
+
+            foreach (GameObject sightable in sight)
             {
-                Debug.DrawRay(gameObject.transform.position, gameObject.transform.TransformDirection(-v), Color.green, 5);
-                if (Physics.Raycast(gameObject.transform.position, gameObject.transform.TransformDirection(-v), out hit))
+                if (targets.Contains(sightable.GetComponent<NEAT>().species))
                 {
-                    var hitObj = hit.transform.gameObject.GetComponentInChildren<Agents.NEAT>();
-                    if (hitObj != null && this.targets.Contains(hitObj.species))
-                    {
-                        foundFood = true;
-                        target = hit.transform;
-                        break;
-                    }
-                }
-            }
-            if (foundFood == false)
-            {
-                if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)
-                {
-                    //lookAround();
-                    lastAction = Time.realtimeSinceStartup;
+                    target = sightable.transform;
+                    targetGO = sightable;
+                    break;
                 }
             }
         }
+        /*
+        private void flee()
+        {
+            SightManager sightManager = gameObject.GetComponent<SightManager>();
+            List<GameObject> sight = sightManager.gameObjects;
+
+            foreach (GameObject sightable in sight)
+            {
+                if (targets.Contains(sightable.GetComponent<NEAT>().species) && sightable.GetComponent<NEAT>().Animal)
+                {
+                    target = sightable.transform;
+                    targetGO = sightable;
+                    break;
+                }
+            }
+        }*/
 
         /*
         private void lookForWater()
@@ -133,16 +164,33 @@ namespace Animals
 
         private void moveToTarget()
         {
-            //if (this is Wolf)
-            //Debug.Log("vec : " + (gameObject.transform.position - target.position).normalized + ", SPEED : " + parameters["MAX_RUN_SPEED"].value + ", DT : " + Time.deltaTime + " result : " +
-            //    ((gameObject.transform.position - target.position).normalized * parameters["MAX_RUN_SPEED"].value * Time.deltaTime));
-            //Debug.Log("vec : " + (Vector3.forward * parameters["MAX_RUN_SPEED"].value));
-            //gameObject.transform.position += gameObject.transform.TransformDirection((gameObject.transform.position - target.position).normalized * parameters["MAX_RUN_SPEED"].value * Time.deltaTime * gameObject.transform.localScale.z);
-            gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-            gameObject.transform.LookAt(target);
-            gameObject.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * parameters["MAX_RUN_SPEED"].value * 100, ForceMode.Force);
+            gameObject.GetComponent<NavMeshAgent>().SetDestination(target.position);
+            //animator.SetBool("isWalking", false);
+            //animator.SetBool("isRunning", true);
+
             Entity entity = target.gameObject.GetComponent<NEAT>().Animal;
+            if (targetIsMate())
+                reproduce(entity as Animal);
+            else
+                attack(entity);
+        }
+
+        float timeSinceRep = 0;
+
+        private void reproduce(Animal animal)
+        {
+            if ((timeSinceRep == 0 || timeSinceRep - Time.realtimeSinceStartup >= 30) && Vector3.Distance(gameObject.transform.position, target.position) <= target.localScale.z)
+            {
+                GameObject.Instantiate(gameObject, gameObject.transform.parent);
+                target = null;
+                targetGO = null;
+
+                timeSinceRep = Time.realtimeSinceStartup;
+            }
+        }
+
+        private void attack(Entity entity)
+        {
             if (entity is Carrot)
             {
                 entity.parameters["isAlive"].value = false;
@@ -167,17 +215,19 @@ namespace Animals
                 else ATK = 1;
 
                 HP -= ATK;
+                entity.parameters["HP"].value = HP;
             }
         }
 
         public void eat(GameObject go)
         {
             parameters["hunger"].value = parameters["MAX_HUNGER"].value; // hunger is refilled
+            gameObject.GetComponent<SightManager>().gameObjects.Remove(targetGO);
             Destroy(go);
 
-            gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             target = null;
+            targetGO = null;
+            gameObject.GetComponent<NavMeshAgent>().ResetPath();
         }
 
         public void drink()
@@ -197,6 +247,7 @@ namespace Animals
                 parameters.Add("timeSinceDeath", new Parameters.ParameterEntry("timeSinceDeath", 0, false));
 
                 gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+                gameObject.GetComponent<NavMeshAgent>().enabled = false;
             }
         }
 
@@ -218,31 +269,31 @@ namespace Animals
         {
             base.FixedUpdate();
 
-            //time();
+            time();
 
             if (!parameters["isAlive"].value)
+            {
+                if (parameters["timeSinceDeath"].value >= 30)
+                    Destroy(gameObject);
                 return;
+            }
 
-            //if (isHungry())
-            //{
-            //if (target == null)
-            //{
-            //    lookForFood();
-            //}
-            //else
-            //{
-            //    moveToTarget();
-            //    if (!target.gameObject.GetComponent<NEAT>().Animal.parameters["isAlive"].value)
-            //    {
-            //        eat(target.gameObject);
-            //        Debug.Log("eaten");
-            //    }
-            //}
-            //}
-            //else
-            //{
-            lookAround();
-            //}
+            if (target == null)
+            {
+                if (isHungry())
+                    lookForFood();
+                if (needsToReproduce())
+                    lookForMate();
+                lookAround();
+            }
+            else
+            {
+                moveToTarget();
+
+                if (targetGO != null && !targetIsMate() && Vector3.Distance(target.position, gameObject.transform.position) < 2 && !target.gameObject.GetComponent<NEAT>().Animal.parameters["isAlive"].value)
+                    eat(target.gameObject);
+            }
+
 
             ////Debug.Log("time : " + Time.realtimeSinceStartup);
             //if (lastAction == -1 || lastAction <= Time.realtimeSinceStartup - 3)
@@ -267,11 +318,6 @@ namespace Animals
 
             //    //if (parameters["thirst"].value == 0 || parameters["hunger"].value == 0)
             //    //if (parameters["hunger"].value == 0)
-            if (!parameters["isAlive"].value)
-            {
-                if (parameters["timeSinceDeath"].value >= 30)
-                    Destroy(gameObject);
-            }
             //}
         }
     }

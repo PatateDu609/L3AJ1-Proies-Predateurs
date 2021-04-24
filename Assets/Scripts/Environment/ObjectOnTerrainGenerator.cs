@@ -85,6 +85,9 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
 
     private int layerMask;
 
+    [HideInInspector]
+    public bool done = false;
+
     public void Start()
     {
         layerMask = LayerMask.GetMask(LayerMask.LayerToName(terrain.layer));
@@ -92,6 +95,8 @@ public class ObjectOnTerrainGenerator : MonoBehaviour
         System.Random random = new System.Random();
 
         GenerateGroups(random);
+
+        done = true;
     }
 
     /// <summary>

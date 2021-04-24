@@ -25,6 +25,7 @@ namespace Agents
         public float age;
         public float hp;
         public float timeSinceDeath;
+        public bool gender;
 
         private void Start()
         {
@@ -58,7 +59,6 @@ namespace Agents
 
         private void FixedUpdate()
         {
-            
             animal.FixedUpdate();
             if (animal is Animal)
             {
@@ -67,6 +67,7 @@ namespace Agents
                 age = animal.parameters["age"].value;
                 hp = animal.parameters["HP"].value;
                 timeSinceDeath = animal.parameters.ContainsKey("timeSinceDeath") ? animal.parameters["timeSinceDeath"].value : 0;
+                gender = animal.parameters["isMale"].value;
             }
         }
 

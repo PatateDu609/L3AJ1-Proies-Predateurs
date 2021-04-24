@@ -8193,6 +8193,9 @@ GameObject:
   - component: {fileID: 8224448861553575830}
   - component: {fileID: 8268912576601434987}
   - component: {fileID: 7747851883595101838}
+  - component: {fileID: 4681856797344121385}
+  - component: {fileID: 1798421696395708380}
+  - component: {fileID: 5306149890137011410}
   m_Layer: 0
   m_Name: Wolf
   m_TagString: Wolf
@@ -8282,6 +8285,7 @@ MonoBehaviour:
   age: 0
   hp: 0
   timeSinceDeath: 0
+  gender: 0
 --- !u!195 &7747851883595101838
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -8304,6 +8308,46 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &4681856797344121385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2156221750587477158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37480a1ce3e46f34ab32ea61195902e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 5
+  angle: 90
+  sphereCollider: {fileID: 0}
+  gameObjects: []
+--- !u!114 &1798421696395708380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2156221750587477158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e5fb5d0bb77ff2418b066f688234f7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5306149890137011410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2156221750587477158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e5fb5d0bb77ff2418b066f688234f7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2156221750587477160
 GameObject:
   m_ObjectHideFlags: 0

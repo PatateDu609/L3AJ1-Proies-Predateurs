@@ -1636,6 +1636,8 @@ GameObject:
   - component: {fileID: 3746842880570194771}
   - component: {fileID: 8893901604447057919}
   - component: {fileID: 969353180039541736}
+  - component: {fileID: 608485482809955140}
+  - component: {fileID: 4548072105282413157}
   m_Layer: 0
   m_Name: Rabbit
   m_TagString: Rabbit
@@ -1725,6 +1727,7 @@ MonoBehaviour:
   age: 0
   hp: 0
   timeSinceDeath: 0
+  gender: 0
 --- !u!195 &969353180039541736
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1747,6 +1750,34 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &608485482809955140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 522175110012353938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37480a1ce3e46f34ab32ea61195902e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 4
+  angle: 90
+  sphereCollider: {fileID: 0}
+  gameObjects: []
+--- !u!114 &4548072105282413157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 522175110012353938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e5fb5d0bb77ff2418b066f688234f7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &522175110012353940
 GameObject:
   m_ObjectHideFlags: 0

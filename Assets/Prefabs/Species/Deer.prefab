@@ -8793,6 +8793,8 @@ GameObject:
   - component: {fileID: 6716238324085907003}
   - component: {fileID: 7494872396200697944}
   - component: {fileID: 7735915278235423934}
+  - component: {fileID: 3692191293229412985}
+  - component: {fileID: 7512443563703822468}
   m_Layer: 0
   m_Name: Deer
   m_TagString: Deer
@@ -8882,6 +8884,7 @@ MonoBehaviour:
   age: 0
   hp: 0
   timeSinceDeath: 0
+  gender: 0
 --- !u!195 &7735915278235423934
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -8904,6 +8907,34 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &3692191293229412985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5101504711410699620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37480a1ce3e46f34ab32ea61195902e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 5
+  angle: 90
+  sphereCollider: {fileID: 0}
+  gameObjects: []
+--- !u!114 &7512443563703822468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5101504711410699620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e5fb5d0bb77ff2418b066f688234f7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5101504711410699622
 GameObject:
   m_ObjectHideFlags: 0

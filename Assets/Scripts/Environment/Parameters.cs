@@ -63,7 +63,7 @@ namespace Environment
             bear.parameters["id"].value = "bear";
             bear.parameters["ADULT_AGE"].value = 16;
             bear.parameters["MAX_AGE"].value = 80;
-            bear.parameters["MAX_HUNGER"].value = 15; //75
+            bear.parameters["MAX_HUNGER"].value = 75; //75
             bear.parameters["MAX_THIRST"].value = 15;
             bear.parameters["MAX_RUN_SPEED"].value = 45; // 45 is the true value
             bear.parameters["pregnancyTime"].value = 4;
@@ -123,11 +123,6 @@ namespace Environment
             { }
 
             return Load();
-        }
-
-        public static void Save(Parameters param, string name)
-        {
-            File.WriteAllText(name, JsonUtility.ToJson(ParametersList.toList(param.parameters)));
         }
 
         [Serializable]

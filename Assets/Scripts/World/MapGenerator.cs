@@ -145,7 +145,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    public Vector3 GetRandomPointOnMesh(Vector3 pos, float walkRadius)
+    public static Vector3 GetRandomPointOnMesh(Vector3 pos, float walkRadius)
     {
         Vector3 randomDirection = Random.insideUnitSphere * walkRadius;
 
