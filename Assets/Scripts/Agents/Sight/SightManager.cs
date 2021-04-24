@@ -72,7 +72,8 @@ public class SightManager : MonoBehaviour
     public bool IsSightable(GameObject other)
     {
         Vector3 forward = transform.forward;
-        Vector3 direction = (other.transform.position - gameObject.transform.position).normalized;
+        Vector3 position = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
+        Vector3 direction = (position - gameObject.transform.position).normalized;
 
         if (!(Mathf.Acos(Vector3.Dot(forward, direction)) * Mathf.Rad2Deg <= angle / 2))
             return false;
