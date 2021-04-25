@@ -11,12 +11,19 @@ namespace Animals
     [Serializable]
     public abstract class Animal : Entity
     {
+        public enum ReproductionState { NONE, BIRTH_GIVER, PARTNER }
+
         public List<Species> targets = new List<Species>();
         public Transform transform;
         public Transform target;
         public GameObject targetGO;
         private Animator animator;
-        private bool goToDrink;
+        //private bool goToDrink;
+
+        private ReproductionState reproductionState = ReproductionState.NONE;
+        private int nbRep = 0;
+
+        private readonly float fausseCouche = 0.4f;
 
         public Animal() : base()
         {
@@ -53,7 +60,8 @@ namespace Animals
 
         public bool needsToReproduce()
         {
-            return parameters["age"].value >= parameters["ADULT_AGE"].value;
+            System.Random rnd = new System.Random();
+            return (parameters["age"].value >= parameters["ADULT_AGE"].value) && (rnd.Next() % 2 == 0);
         }
 
         public bool targetIsMate()
@@ -82,17 +90,23 @@ namespace Animals
 
         private void lookForMate()
         {
+            if (nbRep >= 1)
+                return;
+
             SightManager sightManager = gameObject.GetComponent<SightManager>();
             Dictionary<GameObject, Vector3> sight = sightManager.gameObjects;
 
             foreach (var entry in sight)
             {
                 GameObject sightable = entry.Key;
-                if (gameObject.tag == sightable.tag && parameters["isMale"].value != sightable.gameObject.GetComponent<NEAT>().Animal.parameters["isMale"].value)
+                if (gameObject.tag == sightable.tag)
                 {
+                    if ((sightable.GetComponent<NEAT>().Animal as Animal).nbRep >= 1)
+                        continue;
+
                     target = sightable.transform;
                     targetGO = sightable;
-                    goToDrink = false;
+                    //goToDrink = false;
                     break;
                 }
             }
@@ -110,7 +124,7 @@ namespace Animals
                 {
                     target = sightable.transform;
                     targetGO = sightable;
-                    goToDrink = false;
+                    //goToDrink = false;
                     break;
                 }
             }
@@ -126,6 +140,9 @@ namespace Animals
             foreach (var entry in sight)
             {
                 GameObject sightable = entry.Key;
+
+                if (sightable.GetComponent<NEAT>() == null)
+                    continue;
                 Entity entity = sightable.GetComponent<NEAT>().Animal;
 
                 if (entity is Animal)
@@ -138,7 +155,7 @@ namespace Animals
                         Vector3 current = gameObject.transform.position;
 
                         agent.SetDestination(current + (current - predator).normalized * parameters["MAX_RUN_SPEED"].value);
-                        goToDrink = false;
+                        //goToDrink = false;
                         break;
                     }
                 }
@@ -158,7 +175,7 @@ namespace Animals
                     Debug.Log(gameObject.tag + " found water");
                     targetGO = entry.Key;
                     target = targetGO.transform;
-                    goToDrink = true;
+                    //goToDrink = true;
                     break;
                 }
             }
@@ -166,19 +183,17 @@ namespace Animals
 
         private void moveToTarget()
         {
-            if (goToDrink)
-            {
-                Debug.Log(gameObject.tag + " is going to water");
-                gameObject.GetComponent<NavMeshAgent>().SetDestination(gameObject.GetComponent<SightManager>().gameObjects[targetGO]);
-            }
-            else
-                gameObject.GetComponent<NavMeshAgent>().SetDestination(target.position);
+            //if (goToDrink)
+            //{
+            //    Debug.Log(gameObject.tag + " is going to water");
+            //    gameObject.GetComponent<NavMeshAgent>().SetDestination(gameObject.GetComponent<SightManager>().gameObjects[targetGO]);
+            //}
+            //else
+            gameObject.GetComponent<NavMeshAgent>().SetDestination(target.position);
             animator.SetBool("isWalking", false);
             animator.SetBool("isRunning", true);
 
             Entity entity = target.gameObject.GetComponent<NEAT>().Animal;
-            if (goToDrink)
-                return;
             if (targetIsMate())
                 reproduce(entity as Animal);
             else
@@ -189,13 +204,28 @@ namespace Animals
 
         private void reproduce(Animal animal)
         {
-            if ((timeSinceRep == 0 || timeSinceRep - Time.realtimeSinceStartup >= 30) && Vector3.Distance(gameObject.transform.position, target.position) <= target.localScale.z)
-            {
-                GameObject.Instantiate(gameObject, gameObject.transform.parent);
-                target = null;
-                targetGO = null;
+#if UNITY_EDITOR
+            float t = 30;
+#else
+            float t = 1000;
+#endif
 
-                timeSinceRep = Time.realtimeSinceStartup;
+            if (reproductionState != ReproductionState.NONE)
+                return;
+            if ((timeSinceRep == 0 || Time.realtimeSinceStartup - timeSinceRep >= t) && Vector3.Distance(gameObject.transform.position, target.position) <= target.localScale.z)
+            {
+                if (nbRep >= 2 || animal.nbRep >= 2)
+                {
+                    targetGO = null;
+                    target = null;
+                    return;
+                }
+
+                reproductionState = UnityEngine.Random.value < 0.5f ? ReproductionState.BIRTH_GIVER : ReproductionState.PARTNER;
+                if (reproductionState == ReproductionState.BIRTH_GIVER)
+                    animal.reproductionState = ReproductionState.PARTNER;
+                else
+                    animal.reproductionState = ReproductionState.BIRTH_GIVER;
             }
         }
 
@@ -247,6 +277,24 @@ namespace Animals
             parameters["thirst"].value = parameters["MAX_THIRST"].value; // thirst is refilled
         }
 
+        private void giveBirth()
+        {
+            if (targetIsMate())
+            {
+                if (UnityEngine.Random.value < 1 - fausseCouche)
+                    GameObject.Instantiate(gameObject, gameObject.transform.parent);
+                (targetGO.GetComponent<NEAT>().Animal as Animal).reproductionState = ReproductionState.NONE;
+                timeSinceRep = Time.realtimeSinceStartup;
+
+                nbRep++;
+                (targetGO.GetComponent<NEAT>().Animal as Animal).nbRep++;
+            }
+            reproductionState = ReproductionState.NONE;
+
+            target = null;
+            targetGO = null;
+        }
+
         private void death()
         {
             if (!parameters["isAlive"].value)
@@ -270,7 +318,7 @@ namespace Animals
 #if UNITY_EDITOR
             float coeff = 1f;
 #else
-            float coeff = 0.001f;
+            float coeff = 0.02f;
 #endif
 
             //parameters["thirst"].value -= Time.fixedDeltaTime;
@@ -293,7 +341,12 @@ namespace Animals
 
             if (!parameters["isAlive"].value)
             {
+#if UNITY_EDITOR
                 if (parameters["timeSinceDeath"].value >= 30)
+#else
+               
+                if (parameters["timeSinceDeath"].value >= 90)
+#endif
                     Destroy(gameObject);
                 return;
             }
@@ -312,12 +365,14 @@ namespace Animals
             {
                 moveToTarget();
 
+                if (reproductionState == ReproductionState.BIRTH_GIVER)
+                    giveBirth();
                 if (targetGO != null && !targetIsMate() && Vector3.Distance(target.position, gameObject.transform.position) < 2 && !target.gameObject.GetComponent<NEAT>().Animal.parameters["isAlive"].value)
                 {
                     //if (goToDrink)
                     //    drink();
                     //else
-                        eat(target.gameObject);
+                    eat(target.gameObject);
                 }
             }
 

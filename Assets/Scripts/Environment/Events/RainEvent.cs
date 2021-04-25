@@ -5,7 +5,12 @@ using UnityEngine;
 public class RainEvent : Event
 {
     public CloudGenerator cloudGenerator;
+
+#if UNITY_EDITOR
+    public new ParticleSystem particleSystem;
+#else
     public ParticleSystem particleSystem;
+#endif
 
     public void Start()
     {

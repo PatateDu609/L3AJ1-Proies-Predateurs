@@ -21,7 +21,11 @@ public class UserController : MonoBehaviour
     /// <summary>
     ///     <c>camera</c> is the <c>Camera</c> object that will be moved by the controller.
     /// </summary>
+#if UNITY_EDITOR
+    public new GameObject camera;
+#else
     public GameObject camera;
+#endif
 
     public void Update()
     {

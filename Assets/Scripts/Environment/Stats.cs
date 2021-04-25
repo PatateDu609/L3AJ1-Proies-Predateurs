@@ -122,12 +122,11 @@ namespace Environment
 
         private void SetAdvancedStats()
         {
-            int min, max;
             List<Vector2> points = new List<Vector2>();
             float w = advancedViewport.GetComponent<RectTransform>().rect.width;
             float increment = w / valuesThreshold;
 
-            GetMinMax(out min, out max);
+            GetMinMax(out int min, out int max);
             
             foreach (GraphData data in populations.Values)
             {
@@ -171,11 +170,24 @@ namespace Environment
 
             foreach (string sp in species)
             {
-                int currentPop = GameObject.FindGameObjectsWithTag(sp).Length;
+                int currentPop = GetLength(GameObject.FindGameObjectsWithTag(sp));
                 populations[sp].values.Add(currentPop);
                 if (populations[sp].values.Count > valuesThreshold)
                     populations[sp].values.RemoveAt(0);
             }
+        }
+
+        private int GetLength(GameObject[] pop)
+        {
+            int length = 0;
+
+            foreach(GameObject go in pop)
+            {
+                if (go.GetComponent<Agents.NEAT>().Animal.parameters["isAlive"].value)
+                    length++;
+            }
+
+            return length;
         }
 
         private void GetMinMax(out int min, out int max)
