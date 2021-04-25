@@ -38,6 +38,6 @@ public class MapDisplay : MonoBehaviour
         Physics.BakeMesh(meshFilter.sharedMesh.GetInstanceID(), false);
         MeshCollider meshCollider = meshFilter.gameObject.AddComponent<MeshCollider>();
         meshCollider.sharedMaterial = physicMaterial;
-        //meshRenderer.sharedMaterial.mainTexture = texture;
+        meshRenderer.sharedMaterial.mainTexture = texture;
     }
 }

@@ -68,6 +68,9 @@ public class MapGenerator : MonoBehaviour
     /// </summary>
     private void Awake()
     {
+        Environment.Parameters parameters = Menu.EditAction.parameters ?? Environment.Parameters.Load();
+        seed = parameters.parameters["seed"].value;
+
         instance = this;
         DrawMapInEditor();
     }

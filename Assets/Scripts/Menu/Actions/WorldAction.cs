@@ -15,11 +15,20 @@ namespace Menu
             switch (worldPreset)
             {
                 case WorldOptions.WorldPreset1:
+                    EditAction.parameters = Environment.Parameters.Load(0);
+                    LoadScene.Load("World");
+                    break;
                 case WorldOptions.WorldPreset2:
+                    EditAction.parameters = Environment.Parameters.Load(1);
+                    LoadScene.Load("World");
+                    break;
                 case WorldOptions.WorldPreset3:
+                    EditAction.parameters = Environment.Parameters.Load(2);
                     LoadScene.Load("World");
                     break;
                 case WorldOptions.NewWorld:
+                    EditAction.parameters = Environment.Parameters.Load();
+                    EditAction.parameters.parameters["seed"].value = Random.Range(0, int.MaxValue);
                     LoadScene.Load("ParameterMenu");
                     break;
                 default:

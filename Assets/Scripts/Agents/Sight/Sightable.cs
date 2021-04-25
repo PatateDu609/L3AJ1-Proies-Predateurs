@@ -31,6 +31,6 @@ public class Sightable : MonoBehaviour
         SightManager manager = collider.GetComponent<SightManager>();
 
         if (manager && collider == manager.sphereCollider)
-                manager.Remove(gameObject);
+            manager.Remove(gameObject);
     }
 }

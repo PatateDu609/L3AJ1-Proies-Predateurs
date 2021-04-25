@@ -16,6 +16,7 @@ namespace Menu
 
         public void Start()
         {
+            paused = false;
             menu = GetComponent<Canvas>();
             menu.enabled = false;
         }

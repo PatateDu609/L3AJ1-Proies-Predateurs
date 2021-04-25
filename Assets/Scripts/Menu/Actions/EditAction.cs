@@ -15,15 +15,19 @@ namespace Menu
             switch (worldPreset)
             {
                 case WorldAction.WorldOptions.WorldPreset1:
-                    parameters = Parameters.Load(Application.dataPath + "/data/JSON/" + "world1.json");
+                    parameters = Parameters.Load(0);
                     LoadScene.Load("ParameterMenu");
                     break;
                 case WorldAction.WorldOptions.WorldPreset2:
-                    parameters = Parameters.Load(Application.dataPath + "/data/JSON/" + "world2.json");
+                    parameters = Parameters.Load(1);
                     LoadScene.Load("ParameterMenu");
                     break;
                 case WorldAction.WorldOptions.WorldPreset3:
-                    parameters = Parameters.Load(Application.dataPath + "/data/JSON/" + "world3.json");
+                    parameters = Parameters.Load(2);
+                    LoadScene.Load("ParameterMenu");
+                    break;
+                case WorldAction.WorldOptions.NewWorld:
+                    parameters = Parameters.Load();
                     LoadScene.Load("ParameterMenu");
                     break;
                 default:

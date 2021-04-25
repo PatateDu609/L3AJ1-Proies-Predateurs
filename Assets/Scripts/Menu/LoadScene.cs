@@ -14,6 +14,10 @@ namespace Menu
         {
             if (!previous)
                 PreviousMenu.sceneStack.Push(SceneManager.GetActiveScene().name);
+            if (scene == "World")
+            {
+                PreviousMenu.sceneStack.Clear();
+            }
             SceneManager.LoadScene(scene);
         }
     }

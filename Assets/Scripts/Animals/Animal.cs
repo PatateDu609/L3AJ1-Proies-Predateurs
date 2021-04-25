@@ -16,6 +16,7 @@ namespace Animals
         public Transform target;
         public GameObject targetGO;
         private Animator animator;
+        private bool goToDrink;
 
         public Animal() : base()
         {
@@ -41,6 +42,7 @@ namespace Animals
 
         public bool isThirsty()
         {
+            //return true;
             return parameters["thirst"].value < parameters["MAX_THIRST"].value * .6; // the animal is thirsty if its current thirst level is under the third of the max
         }
 
@@ -57,23 +59,6 @@ namespace Animals
         public bool targetIsMate()
         {
             return targetGO.GetComponent<NEAT>().Animal.GetType() == GetType();
-        }
-
-        public void lookForRessource()
-        {
-            if (isHungry())
-            {
-                lookForFood();
-            }
-            else if (isThirsty())
-            {
-                //todo
-                //lookForWater();
-            }
-            else
-            {
-                // lookAround();
-            }
         }
 
         // moves in a random direction
@@ -107,6 +92,7 @@ namespace Animals
                 {
                     target = sightable.transform;
                     targetGO = sightable;
+                    goToDrink = false;
                     break;
                 }
             }
@@ -124,6 +110,7 @@ namespace Animals
                 {
                     target = sightable.transform;
                     targetGO = sightable;
+                    goToDrink = false;
                     break;
                 }
             }
@@ -134,6 +121,8 @@ namespace Animals
             SightManager sightManager = gameObject.GetComponent<SightManager>();
             Dictionary<GameObject, Vector3> sight = sightManager.gameObjects;
 
+            if (sight == null)
+                return;
             foreach (var entry in sight)
             {
                 GameObject sightable = entry.Key;
@@ -148,34 +137,48 @@ namespace Animals
                         Vector3 predator = sightable.transform.position;
                         Vector3 current = gameObject.transform.position;
 
-                        agent.Move((current - predator).normalized * parameters["MAX_RUN_SPEED"].value);
+                        agent.SetDestination(current + (current - predator).normalized * parameters["MAX_RUN_SPEED"].value);
+                        goToDrink = false;
                         break;
                     }
                 }
             }
         }
 
-        /*
         private void lookForWater()
         {
-            if ()
-            {
+            Debug.Log(gameObject.tag + " is looking for water");
+            SightManager sightManager = gameObject.GetComponent<SightManager>();
+            Dictionary<GameObject, Vector3> sight = sightManager.gameObjects;
 
-            }
-            else
+            foreach (var entry in sight)
             {
-                lookAround();
+                if (entry.Key.name == "Water")
+                {
+                    Debug.Log(gameObject.tag + " found water");
+                    targetGO = entry.Key;
+                    target = targetGO.transform;
+                    goToDrink = true;
+                    break;
+                }
             }
         }
-        */
 
         private void moveToTarget()
         {
-            gameObject.GetComponent<NavMeshAgent>().SetDestination(target.position);
+            if (goToDrink)
+            {
+                Debug.Log(gameObject.tag + " is going to water");
+                gameObject.GetComponent<NavMeshAgent>().SetDestination(gameObject.GetComponent<SightManager>().gameObjects[targetGO]);
+            }
+            else
+                gameObject.GetComponent<NavMeshAgent>().SetDestination(target.position);
             animator.SetBool("isWalking", false);
             animator.SetBool("isRunning", true);
 
             Entity entity = target.gameObject.GetComponent<NEAT>().Animal;
+            if (goToDrink)
+                return;
             if (targetIsMate())
                 reproduce(entity as Animal);
             else
@@ -241,7 +244,7 @@ namespace Animals
 
         public void drink()
         {
-            parameters["thirst"].value = parameters["MAX_THIRST"].value; // t/hirst is refilled
+            parameters["thirst"].value = parameters["MAX_THIRST"].value; // thirst is refilled
         }
 
         private void death()
@@ -252,6 +255,8 @@ namespace Animals
                 || parameters["hunger"].value <= 0 || parameters["thirst"].value <= 0)
             {
                 animator.SetBool("died", true);
+                animator.SetBool("isWalking", false);
+                animator.SetBool("isRunning", false);
                 parameters["isAlive"].value = false;
                 parameters.Add("timeSinceDeath", new Parameters.ParameterEntry("timeSinceDeath", 0, false));
 
@@ -262,12 +267,18 @@ namespace Animals
 
         private void time()
         {
-            //parameters["thrist"].value -= Time.fixedDeltaTime;
-            parameters["hunger"].value -= Time.fixedDeltaTime;
+#if UNITY_EDITOR
+            float coeff = 1f;
+#else
+            float coeff = 0.001f;
+#endif
+
+            //parameters["thirst"].value -= Time.fixedDeltaTime;
+            parameters["hunger"].value -= Time.fixedDeltaTime * coeff;
             if (parameters["isAlive"].value)
-                parameters["age"].value += Time.fixedDeltaTime;
+                parameters["age"].value += Time.fixedDeltaTime * coeff;
             else
-                parameters["timeSinceDeath"].value += Time.fixedDeltaTime;
+                parameters["timeSinceDeath"].value += Time.fixedDeltaTime * coeff;
 
             death();
         }
@@ -291,7 +302,9 @@ namespace Animals
             {
                 if (isHungry())
                     lookForFood();
-                if (needsToReproduce())
+                //else if (isThirsty())
+                //    lookForWater();
+                else if (needsToReproduce())
                     lookForMate();
                 lookAround();
             }
@@ -300,7 +313,12 @@ namespace Animals
                 moveToTarget();
 
                 if (targetGO != null && !targetIsMate() && Vector3.Distance(target.position, gameObject.transform.position) < 2 && !target.gameObject.GetComponent<NEAT>().Animal.parameters["isAlive"].value)
-                    eat(target.gameObject);
+                {
+                    //if (goToDrink)
+                    //    drink();
+                    //else
+                        eat(target.gameObject);
+                }
             }
 
             flee();

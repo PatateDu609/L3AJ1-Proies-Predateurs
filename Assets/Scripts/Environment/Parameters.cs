@@ -22,7 +22,7 @@ namespace Environment
             wolf.parameters["ADULT_AGE"].value = 4;
             wolf.parameters["MAX_AGE"].value = 20;
             wolf.parameters["MAX_HUNGER"].value = 45; //15 // 40
-            wolf.parameters["MAX_THIRST"].value = 20;
+            wolf.parameters["MAX_THIRST"].value = wolf.parameters["MAX_HUNGER"].value * 1.5;
             wolf.parameters["MAX_RUN_SPEED"].value = 5; // 50
             wolf.parameters["pregnancyTime"].value = 4;
             wolf.parameters["nbOfBabyPerLitter"].value = 3;
@@ -36,7 +36,7 @@ namespace Environment
             rabbit.parameters["ADULT_AGE"].value = 4;
             rabbit.parameters["MAX_AGE"].value = 22;
             rabbit.parameters["MAX_HUNGER"].value = 75; //25
-            rabbit.parameters["MAX_THIRST"].value = 15;
+            rabbit.parameters["MAX_THIRST"].value = rabbit.parameters["MAX_HUNGER"].value * 1.5;
             rabbit.parameters["MAX_RUN_SPEED"].value = 5; // 45 is the true value
             rabbit.parameters["pregnancyTime"].value = 4;
             rabbit.parameters["nbOfBabyPerLitter"].value = 3;
@@ -50,7 +50,7 @@ namespace Environment
             deer.parameters["ADULT_AGE"].value = 3;
             deer.parameters["MAX_AGE"].value = 20;
             deer.parameters["MAX_HUNGER"].value = 75; //75
-            deer.parameters["MAX_THIRST"].value = 15;
+            deer.parameters["MAX_THIRST"].value = deer.parameters["MAX_HUNGER"].value * 1.5;
             deer.parameters["MAX_RUN_SPEED"].value = 45; // 45 is the true value
             deer.parameters["pregnancyTime"].value = 4;
             deer.parameters["nbOfBabyPerLitter"].value = 3;
@@ -64,7 +64,7 @@ namespace Environment
             bear.parameters["ADULT_AGE"].value = 16;
             bear.parameters["MAX_AGE"].value = 80;
             bear.parameters["MAX_HUNGER"].value = 75; //75
-            bear.parameters["MAX_THIRST"].value = 15;
+            bear.parameters["MAX_THIRST"].value = bear.parameters["MAX_HUNGER"].value * 1.5;
             bear.parameters["MAX_RUN_SPEED"].value = 45; // 45 is the true value
             bear.parameters["pregnancyTime"].value = 4;
             bear.parameters["nbOfBabyPerLitter"].value = 3;
@@ -78,7 +78,7 @@ namespace Environment
             cat.parameters["ADULT_AGE"].value = 4;
             cat.parameters["MAX_AGE"].value = 25;
             cat.parameters["MAX_HUNGER"].value = 75; //25
-            cat.parameters["MAX_THIRST"].value = 15;
+            cat.parameters["MAX_THIRST"].value = cat.parameters["MAX_HUNGER"].value * 1.5;
             cat.parameters["MAX_RUN_SPEED"].value = 5; // 45 is the true value
             cat.parameters["pregnancyTime"].value = 4;
             cat.parameters["nbOfBabyPerLitter"].value = 3;
@@ -107,22 +107,15 @@ namespace Environment
             return p;
         }
 
-        public static Parameters Load(string name)
+        public static Parameters Load(int id)
         {
-            try
-            {
-                string json = File.ReadAllText(name);
-                ParametersList list = JsonUtility.FromJson<ParametersList>(json);
+            Parameters parameters = Load();
 
-                return new Parameters
-                {
-                    parameters = list.toDict()
-                };
-            }
-            catch
-            { }
+            if (id < 0 || id > 2)
+            return parameters;
 
-            return Load();
+            parameters.parameters["seed"].value = new int[] { 332, 355, 384 }[id];
+            return parameters;
         }
 
         [Serializable]

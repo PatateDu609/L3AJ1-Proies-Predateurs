@@ -12,7 +12,7 @@ public class UserController : MonoBehaviour
     ///     <c>speed</c> models the speed of the user in the scene.
     /// </summary>
     public float speed = 2f;
-    
+
     /// <summary>
     ///     <c>mouseSpeed</c> models the sensibility of the user mouse.
     /// </summary>
@@ -21,7 +21,7 @@ public class UserController : MonoBehaviour
     /// <summary>
     ///     <c>camera</c> is the <c>Camera</c> object that will be moved by the controller.
     /// </summary>
-    public new GameObject camera;
+    public GameObject camera;
 
     public void Update()
     {
@@ -41,7 +41,7 @@ public class UserController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space))
             transform.Translate(Vector3.up * speed * Time.deltaTime);
-        if (Input.GetKey(KeyCode.LeftControl))
+        if (Input.GetKey(KeyCode.LeftControl) && !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
             transform.Translate(Vector3.down * speed * Time.deltaTime);
     }
 

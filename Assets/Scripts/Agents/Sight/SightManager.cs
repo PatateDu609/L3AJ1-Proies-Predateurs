@@ -27,7 +27,7 @@ public class SightManager : MonoBehaviour
     /// </summary>
     public Dictionary<GameObject, Vector3> gameObjects;
 
-    public void Start()
+    public void Awake()
     {
         Initialize();
     }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class RainEvent : Event
 {
     public CloudGenerator cloudGenerator;
-    public new ParticleSystem particleSystem;
+    public ParticleSystem particleSystem;
 
     public void Start()
     {
@@ -13,7 +13,7 @@ public class RainEvent : Event
     }
 
     public override void Initialize() { 
-        cloudGenerator.Generate(500, new Vector3(50, 15, 50), new Vector3(100, 25, 100));
+        cloudGenerator.Generate(50, new Vector3(50, 15, 50), new Vector3(100, 25, 100));
     }
 
     public override void Play()

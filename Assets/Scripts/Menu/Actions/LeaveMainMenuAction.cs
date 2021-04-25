@@ -8,6 +8,7 @@ namespace Menu
     {
         public void Action()
         {
+            Time.timeScale = 1;
             PreviousMenu.sceneStack.Clear();
             LoadScene.Load("MainMenu", true);
         }
