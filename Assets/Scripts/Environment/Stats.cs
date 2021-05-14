@@ -16,6 +16,7 @@ namespace Environment
         public GameObject basicStats;
         public GameObject midStats;
         public GameObject advancedStats;
+        public GameObject individualStats;
 
         public GameObject midStatsEntry;
 
@@ -28,11 +29,18 @@ namespace Environment
         public GameObject legendViewport;
         public List<Color> legendColor;
 
+        [Header("Individual stats parameters")]
+        public GameObject hungerGO;
+        public GameObject thirstGO;
+        public GameObject ageGO;
+
         private Dictionary<string, GraphData> populations = new Dictionary<string, GraphData>();
         private const int inc = 5;
 
         private bool isMidActive = false;
         private bool isAdvActive = false;
+
+        private GameObject target = null;
 
         private void Start()
         {
@@ -43,6 +51,7 @@ namespace Environment
             basicStats.SetActive(false);
             midStats.SetActive(false);
             advancedStats.SetActive(false);
+            individualStats.SetActive(false);
 
             string[] species = Enum.GetNames(typeof(Species));
             List<Color> colors = new List<Color>(legendColor);
@@ -73,6 +82,8 @@ namespace Environment
             bool shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
             bool ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
 
+            UpdateTarget();
+
             if (!ctrl && !shift && f3)
                 basicStats.SetActive(!basicStats.activeSelf);
             else if ((!ctrl && shift && f3) || isMidActive)
@@ -95,6 +106,10 @@ namespace Environment
                 midStats.SetActive(isAdvActive);
                 advancedStats.SetActive(isAdvActive);
             }
+            if (target != null)
+                SetIndividualStats();
+
+            individualStats.SetActive(target != null);
 
             if (Time.frameCount % inc == 0)
                 UpdatePop();
@@ -127,7 +142,7 @@ namespace Environment
             float increment = w / valuesThreshold;
 
             GetMinMax(out int min, out int max);
-            
+
             foreach (GraphData data in populations.Values)
             {
                 points.Clear();
@@ -164,6 +179,25 @@ namespace Environment
             }
         }
 
+        private void SetIndividualStats()
+        {
+            var neat = target.GetComponent<Agents.NEAT>();
+            if (neat == null)
+                return;
+            if (neat.Animal == null)
+                return;
+
+            var parameters = neat.Animal.parameters;
+
+            float hunger = Mathf.InverseLerp(0.0f, (float)parameters["MAX_HUNGER"].value, (float)parameters["hunger"].value);
+            float thirst = Mathf.InverseLerp(0.0f, (float)parameters["MAX_THIRST"].value, (float)parameters["thirst"].value);
+            float age = Mathf.InverseLerp(0.0f, (float)parameters["MAX_AGE"].value, (float)parameters["age"].value);
+
+            SetChild(hunger, (float)parameters["hunger"].value, hungerGO);
+            SetChild(thirst, (float)parameters["thirst"].value, thirstGO);
+            SetChild(age, (float)parameters["age"].value, ageGO, false);
+        }
+
         private void UpdatePop()
         {
             string[] species = Enum.GetNames(typeof(Species));
@@ -181,9 +215,10 @@ namespace Environment
         {
             int length = 0;
 
-            foreach(GameObject go in pop)
+            foreach (GameObject go in pop)
             {
-                if (go.GetComponent<Agents.NEAT>().Animal.parameters["isAlive"].value)
+                Agents.NEAT comp = go.GetComponent<Agents.NEAT>();
+                if (comp != null && comp.Animal != null && comp.Animal.parameters["isAlive"].value)
                     length++;
             }
 
@@ -215,6 +250,32 @@ namespace Environment
             image.color = colors[index];
 
             colors.RemoveAt(index);
+        }
+
+        private void UpdateTarget()
+        {
+            if (Input.GetMouseButton(1))
+                target = null;
+            if (!Input.GetMouseButton(0))
+                return;
+
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out RaycastHit hit))
+                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Animal"))
+                    target = hit.collider.gameObject;
+        }
+
+        private void SetChild(float val, float trueVal, GameObject go, bool slider = true)
+        {
+            Text text = go.GetComponentInChildren<Text>();
+
+            int index = text.text.IndexOf(':');
+            if (index > 0)
+                text.text = text.text.Substring(0, index + 1) + " " + Mathf.RoundToInt(trueVal);
+
+            if (slider)
+                go.GetComponent<Slider>().value = val;
         }
     }
 

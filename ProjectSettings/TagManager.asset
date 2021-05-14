@@ -11,6 +11,12 @@ TagManager:
   - MidStats
   - AdvancedStats
   - Tree
+  - Wolf
+  - Bear
+  - Carrot
+  - Cat
+  - Deer
+  - Rabbit
   layers:
   - Default
   - TransparentFX
@@ -23,7 +29,7 @@ TagManager:
   - Stats
   - Terrain
   - Tree
-  - 
+  - Animal
   - 
   - 
   - 

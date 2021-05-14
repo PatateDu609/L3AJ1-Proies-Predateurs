@@ -19,11 +19,13 @@ namespace Animals
         public GameObject targetGO;
         private Animator animator;
         //private bool goToDrink;
+        private bool goToMate = false;
 
         private ReproductionState reproductionState = ReproductionState.NONE;
         private int nbRep = 0;
+        private int maxRep = 2;
 
-        private readonly float fausseCouche = 0.4f;
+        private readonly float fausseCouche = 0.5f;
 
         public Animal() : base()
         {
@@ -90,7 +92,7 @@ namespace Animals
 
         private void lookForMate()
         {
-            if (nbRep >= 1)
+            if (nbRep >= maxRep)
                 return;
 
             SightManager sightManager = gameObject.GetComponent<SightManager>();
@@ -99,14 +101,18 @@ namespace Animals
             foreach (var entry in sight)
             {
                 GameObject sightable = entry.Key;
-                if (gameObject.tag == sightable.tag)
+                if (sightable != null && gameObject.tag == sightable.tag)
                 {
-                    if ((sightable.GetComponent<NEAT>().Animal as Animal).nbRep >= 1)
+                    Animal animal = sightable.GetComponent<NEAT>().Animal as Animal;
+                    if (animal.nbRep >= maxRep && animal.target != null && !animal.needsToReproduce())
                         continue;
 
                     target = sightable.transform;
                     targetGO = sightable;
+                    animal.target = gameObject.transform;
+                    animal.targetGO = gameObject;
                     //goToDrink = false;
+                    goToMate = true;
                     break;
                 }
             }
@@ -120,11 +126,12 @@ namespace Animals
             foreach (var entry in sight)
             {
                 GameObject sightable = entry.Key;
-                if (targets.Contains(sightable.GetComponent<NEAT>().species))
+                if (sightable != null && targets.Contains(sightable.GetComponent<NEAT>().species))
                 {
                     target = sightable.transform;
                     targetGO = sightable;
                     //goToDrink = false;
+                    goToMate = false;
                     break;
                 }
             }
@@ -141,7 +148,7 @@ namespace Animals
             {
                 GameObject sightable = entry.Key;
 
-                if (sightable.GetComponent<NEAT>() == null)
+                if (sightable == null || sightable.GetComponent<NEAT>() == null)
                     continue;
                 Entity entity = sightable.GetComponent<NEAT>().Animal;
 
@@ -156,6 +163,7 @@ namespace Animals
 
                         agent.SetDestination(current + (current - predator).normalized * parameters["MAX_RUN_SPEED"].value);
                         //goToDrink = false;
+                        goToMate = false;
                         break;
                     }
                 }
@@ -210,11 +218,13 @@ namespace Animals
             float t = 1000;
 #endif
 
+            goToMate = false;
+
             if (reproductionState != ReproductionState.NONE)
                 return;
             if ((timeSinceRep == 0 || Time.realtimeSinceStartup - timeSinceRep >= t) && Vector3.Distance(gameObject.transform.position, target.position) <= target.localScale.z)
             {
-                if (nbRep >= 2 || animal.nbRep >= 2)
+                if (nbRep >= maxRep || animal.nbRep >= maxRep)
                 {
                     targetGO = null;
                     target = null;
@@ -322,9 +332,11 @@ namespace Animals
 #endif
 
             //parameters["thirst"].value -= Time.fixedDeltaTime;
-            parameters["hunger"].value -= Time.fixedDeltaTime * coeff;
             if (parameters["isAlive"].value)
+            {
+                parameters["hunger"].value -= Time.fixedDeltaTime * coeff;
                 parameters["age"].value += Time.fixedDeltaTime * coeff;
+            }
             else
                 parameters["timeSinceDeath"].value += Time.fixedDeltaTime * coeff;
 
@@ -351,6 +363,12 @@ namespace Animals
                 return;
             }
 
+            if (target != null && isHungry() && goToMate)
+            {
+                target = null;
+                goToMate = false;
+            }
+
             if (target == null)
             {
                 if (isHungry())
@@ -359,6 +377,11 @@ namespace Animals
                 //    lookForWater();
                 else if (needsToReproduce())
                     lookForMate();
+                else
+                {
+                    target = null;
+                    targetGO = null;
+                }
                 lookAround();
             }
             else
