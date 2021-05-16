@@ -12,6 +12,7 @@ public static class Noise
     private static NoiseSettings noiseSettings;
 
     /// <summary>
+    /// author : Anis Koraichi
     /// Génération de la NoiseMap finale. Elle renvoie un tableau de float contenant les valeurs représentant les différents points de hauteurs de la carte
     /// </summary>
     /// <param name="noiseSettings"></param>
@@ -53,6 +54,7 @@ public static class Noise
         return noiseMap;
     }
     /// <summary>
+    /// author : Anis Koraichi
     /// Création de la noiseMap 
     /// </summary>
     /// <param name="noiseMap"></param>

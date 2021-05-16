@@ -11,6 +11,7 @@ public static class TextureGenerator
 {
 
     /// <summary>
+    /// author : Anis Koraichi
     /// Application d'une couleur à la colourMap liée
     /// </summary>
     /// <param name="colourMap"></param>
@@ -28,6 +29,7 @@ public static class TextureGenerator
     }
 
     /// <summary>
+    /// author : Anis Koraichi
     /// Création d'une colourMap à partir de la noiseMap liée puis application de leurs couleurs
     /// </summary>
     /// <param name="noiseMap"></param>

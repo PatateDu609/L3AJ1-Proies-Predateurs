@@ -64,6 +64,7 @@ public class MapGenerator : MonoBehaviour
     public NavMeshSurface surface;
 
     /// <summary>
+    /// author : Anis Koraichi
     /// Permet de charger le monde et ses textures lors du lancement
     /// </summary>
     private void Awake()
@@ -81,6 +82,7 @@ public class MapGenerator : MonoBehaviour
     }
 
     /// <summary>
+    /// author : Anis Koraichi
     /// Permet de visualiser le monde créer sur l'éditeur d'Unity
     /// </summary>
     public void DrawMapInEditor()
@@ -102,6 +104,7 @@ public class MapGenerator : MonoBehaviour
     }
 
     /// <summary>
+    /// author : Anis Koraichi
     /// Méthode centrale de la génération de monde. Elle permet de créer un élèment de type MapData contenant toutes les informations nécessaires à la création du modèle du monde
     /// </summary>
     /// <returns></returns>
@@ -138,9 +141,10 @@ public class MapGenerator : MonoBehaviour
         }
 
         return new MapData(noiseMap, colourMap);
-    }   
+    }
 
     /// <summary>
+    /// author : Anis Koraichi
     /// Méthode permettant d'éviter d'entrer des données incohérentes
     /// </summary>
     private void OnValidate()
@@ -166,6 +170,7 @@ public class MapGenerator : MonoBehaviour
 
 
 /// <summary>
+/// author : Anis Koraichi
 /// Structure contenant les informations définissant un type de terrain, c'est à dire, son nom, la hauteur maximale qu'il peut atteindre et la couleur qui lui est liée
 /// </summary>
 [System.Serializable]

@@ -44,10 +44,19 @@ namespace Animals
             parameters.Add("Atk", new Parameters.ParameterEntry("Atk", "Niveau d'attaque maximal", 0, Parameters.ParameterEntry.Type.Slider)); // Atk points of the animal
         }
 
+        /// <summary>
+        /// lancement des animations
+        /// </summary>
         public void Start()
         {
             animator = gameObject.GetComponent<Animator>();
         }
+
+        /// <summary>
+        /// author : Ghali Boucetta
+        /// Vérification de l'état de soif d'un agent
+        /// </summary>
+        /// <returns>true si la valeur de soif actuelle est inférieure ou égale aux 2/3 de la valeur maximale de l'espèce</returns>
 
         public bool isThirsty()
         {
@@ -55,23 +64,41 @@ namespace Animals
             return parameters["thirst"].value < parameters["MAX_THIRST"].value * .6; // the animal is thirsty if its current thirst level is under the third of the max
         }
 
+        /// <summary>
+        /// author : Ghali Boucetta
+        /// Vérification de l'état de faim d'un agent
+        /// </summary>
+        /// <returns>true si la valeur de faim actuelle est inférieure ou égale aux 2/3 de la valeur maximale de l'espèce</returns>
+        /// 
         public bool isHungry()
         {
             return parameters["hunger"].value < parameters["MAX_HUNGER"].value * .6; // the animal is hungry if its current hunger level is under the third of the max
         }
 
+        /// <summary>
+        /// author : Anis Koraichi
+        /// Vérifie si un agent a besoin de se reproduire
+        /// </summary>
+        /// <returns>true si l'agent est d'âge adulte et s'il est en période de chaleur</returns>
         public bool needsToReproduce()
         {
             System.Random rnd = new System.Random();
             return (parameters["age"].value >= parameters["ADULT_AGE"].value) && (rnd.Next() % 2 == 0);
         }
 
+        /// <summary>
+        /// author : Ghali Boucetta
+        /// </summary>
+        /// <returns></returns>
         public bool targetIsMate()
         {
             return targetGO.GetComponent<NEAT>().Animal.GetType() == GetType();
         }
 
-        // moves in a random direction
+        /// <summary>
+        /// author : Ghali Boucetta & Anis Koraichi
+        /// État par défaut d'un agent, il se déplace dans des direction aléatoire
+        /// </summary>
         public void lookAround()
         {
             NavMeshAgent agent = gameObject.GetComponent<NavMeshAgent>();
@@ -89,7 +116,10 @@ namespace Animals
                 animator.SetBool("isRunning", false);
             }
         }
-
+        /// <summary>
+        /// author : Anis Koraichi
+        /// Recherche d'un partenaire dans le but de se reproduire. L'agent se déplace dans une direction aléatoire jusqu'à trouver un partenaire. Une fois le partenaire trouver, il se déplacera vers lui
+        /// </summary>
         private void lookForMate()
         {
             if (nbRep >= maxRep)
@@ -118,6 +148,10 @@ namespace Animals
             }
         }
 
+        /// <summary>
+        /// author : Ghali Boucetta & Anis Koraichi
+        /// Recherche de nourriture
+        /// </summary>
         private void lookForFood()
         {
             SightManager sightManager = gameObject.GetComponent<SightManager>();
@@ -137,6 +171,10 @@ namespace Animals
             }
         }
 
+        /// <summary>
+        /// author : Ghali Boucetta
+        /// Mécanisme de fuite de l'agent. S'il voit un prédateur, il doit aller dans la direction opposé de celle de ce dernier
+        /// </summary>
         private void flee()
         {
             SightManager sightManager = gameObject.GetComponent<SightManager>();
@@ -170,6 +208,10 @@ namespace Animals
             }
         }
 
+        /// <summary>
+        /// author : Anis Koraichi
+        /// Recherche d'eau
+        /// </summary>
         private void lookForWater()
         {
             Debug.Log(gameObject.tag + " is looking for water");
@@ -188,15 +230,12 @@ namespace Animals
                 }
             }
         }
-
+        /// <summary>
+        /// author : Ghali Boucetta
+        /// Mécanisme de traque. L'agent se déplace vers la cible en question et si celle-ci est un partenaire, appelle la fonction reproduce(), sinon appelle attack()
+        /// </summary>
         private void moveToTarget()
         {
-            //if (goToDrink)
-            //{
-            //    Debug.Log(gameObject.tag + " is going to water");
-            //    gameObject.GetComponent<NavMeshAgent>().SetDestination(gameObject.GetComponent<SightManager>().gameObjects[targetGO]);
-            //}
-            //else
             gameObject.GetComponent<NavMeshAgent>().SetDestination(target.position);
             animator.SetBool("isWalking", false);
             animator.SetBool("isRunning", true);
@@ -210,6 +249,10 @@ namespace Animals
 
         float timeSinceRep = 0;
 
+        /// <summary>
+        /// author : Ghali Boucetta
+        /// Reproduction de deux agents. L'agent courant doit se déplacer vers sa cible dans le but de se reproduire
+        /// </summary>
         private void reproduce(Animal animal)
         {
 #if UNITY_EDITOR
@@ -239,6 +282,11 @@ namespace Animals
             }
         }
 
+        /// <summary>
+        /// author : Anis Koraichi
+        /// Méthode représentant le combat entre le prédateur et sa proie. Lorsque le prédateur réussi à s'approcher de sa proie, il la frappe retirant à ses HP une valeur égale à celle d'ATK
+        /// </summary>
+    
         private void attack(Entity entity)
         {
             if (entity is Carrot)
@@ -271,6 +319,11 @@ namespace Animals
             }
         }
 
+        /// <summary>
+        /// author : Anis Koraichi
+        /// Acte de manger d'un agent, sa valeur de satiété remonte au maximum et le gamObject représentant sa nourriture est détruit
+        /// </summary>
+        /// <param name="go"></param>
         public void eat(GameObject go)
         {
             parameters["hunger"].value = parameters["MAX_HUNGER"].value; // hunger is refilled
@@ -282,11 +335,20 @@ namespace Animals
             gameObject.GetComponent<NavMeshAgent>().ResetPath();
         }
 
+        /// <summary>
+        /// author : Anis Koraichi
+        /// Acte de boire d'un agent, sa valeur de soif remonte au maximum
+        /// </summary>
+        /// <param name="go"></param>
         public void drink()
         {
             parameters["thirst"].value = parameters["MAX_THIRST"].value; // thirst is refilled
         }
 
+        /// <summary>
+        /// author : Ghali Boucetta
+        /// Une fois que deux agents sont prêts à se reproduire, un nouveau gameObject est créé représentant l'enfant
+        /// </summary>
         private void giveBirth()
         {
             if (targetIsMate())
@@ -305,6 +367,10 @@ namespace Animals
             targetGO = null;
         }
 
+        /// <summary>
+        /// author : Anis Koraichi
+        /// Méthode représentant la mort et les différentes raisons qui peuvent la causer. Lorsqu'une raison est respectée, lancement de l'animation de mort puis initialisation de "timeSinceDeath"
+        /// </summary>
         private void death()
         {
             if (!parameters["isAlive"].value)
@@ -323,6 +389,10 @@ namespace Animals
             }
         }
 
+        /// <summary>
+        /// author : Ghali Boucetta & Anis Koraichi
+        /// Méthode de simulation du temps, à chaque appel, incrémente les valeurs nécessaires par coeff
+        /// </summary>
         private void time()
         {
 #if UNITY_EDITOR
@@ -345,6 +415,10 @@ namespace Animals
 
         public float lastAction = -1;
 
+        /// <summary>
+        /// author : Ghali Boucetta & Anis Koraichi
+        /// Boucle principale de la simulation, appel des méthodes nécessaires lorsque les conditions sont respectées.
+        /// </summary>
         override public void FixedUpdate()
         {
             base.FixedUpdate();

@@ -15,6 +15,7 @@ public class MapDisplay : MonoBehaviour
     public MeshRenderer meshRenderer;
 
     /// <summary>
+    /// author : Anis Koraichi
     /// Application des textures dans les cas de drawMode égal à NoiseMap ou ColourMap
     /// </summary>
     /// <param name="texture"></param>
@@ -25,6 +26,7 @@ public class MapDisplay : MonoBehaviour
     }
 
     /// <summary>
+    /// author : Anis Koraichi
     /// Application des textures dans les cas de drawMode égal à Mesh
     /// </summary>
     /// <param name="texture"></param>

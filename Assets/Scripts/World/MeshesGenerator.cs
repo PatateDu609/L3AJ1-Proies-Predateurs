@@ -7,6 +7,7 @@ using UnityEngine;
  */
 
 /// <summary>
+/// author : Anis Koraichi
 /// Classe permettant de générer les mesh relatifs au monde
 /// </summary>
 public static class MeshGenerator
